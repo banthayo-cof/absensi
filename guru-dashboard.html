@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>Dashboard Guru - AbsenKu</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Inter',sans-serif; background:#f1f5f9; padding-bottom:80px; }
+        .bottom-nav { position:fixed; bottom:0; left:0; right:0; background:white; display:flex; justify-content:space-around; padding:12px 20px; border-top:1px solid #e2e8f0; box-shadow:0 -4px 12px rgba(0,0,0,0.05); z-index:100; }
+        .nav-item { display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer; transition:all 0.2s; padding:6px 12px; border-radius:24px; }
+        .nav-item i { font-size:22px; color:#94a3b8; }
+        .nav-item span { font-size:11px; color:#94a3b8; font-weight:500; }
+        .nav-item.active i, .nav-item.active span { color:#667eea; }
+        .nav-item.active { background:#f0f4ff; }
+        .header { background:linear-gradient(135deg,#667eea,#764ba2); border-radius:0 0 28px 28px; padding:20px 20px 32px; color:white; }
+        .header-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+        .logo-small { font-size:20px; font-weight:700; }
+        .logout-btn { background:rgba(255,255,255,0.2); border:none; padding:8px 14px; border-radius:20px; color:white; font-size:12px; cursor:pointer; }
+        .greeting h2 { font-size:22px; margin-bottom:4px; }
+        .greeting p { font-size:13px; opacity:0.9; }
+        .package-badge { background:rgba(255,255,255,0.2); border-radius:20px; padding:6px 12px; font-size:12px; display:inline-block; margin-top:12px; }
+        .container { max-width:500px; margin:0 auto; padding:0 16px; }
+        .stats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:-20px; margin-bottom:20px; }
+        .stat-card { background:white; border-radius:20px; padding:14px 8px; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.05); }
+        .stat-card i { font-size:24px; color:#667eea; margin-bottom:8px; }
+        .stat-value { font-size:20px; font-weight:800; color:#1e293b; }
+        .stat-label { font-size:11px; color:#64748b; }
+        .section { background:white; border-radius:24px; padding:20px; margin-bottom:20px; }
+        .section-title { font-size:18px; font-weight:700; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; }
+        .btn-add { background:#667eea; color:white; border:none; width:36px; height:36px; border-radius:12px; font-size:18px; cursor:pointer; }
+        .card-item { background:#f8fafc; border-radius:16px; padding:14px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; }
+        .card-info h4 { font-size:15px; font-weight:700; margin-bottom:4px; }
+        .card-info p { font-size:12px; color:#64748b; }
+        .card-actions { display:flex; gap:8px; }
+        .btn-icon { background:transparent; border:none; padding:8px; border-radius:10px; cursor:pointer; font-size:14px; }
+        .btn-edit { color:#667eea; }
+        .btn-delete { color:#ef4444; }
+        .btn-qr { color:#22c55e; }
+        .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center; padding:20px; }
+        .modal-content { background:white; border-radius:28px; padding:24px; max-width:400px; width:100%; max-height:90vh; overflow-y:auto; }
+        .form-group { margin-bottom:16px; }
+        .form-group label { display:block; font-size:13px; margin-bottom:6px; font-weight:600; }
+        .form-group input, .form-group select { width:100%; padding:12px; border:1px solid #e2e8f0; border-radius:12px; font-size:14px; font-family:'Inter',sans-serif; }
+        .modal-buttons { display:flex; gap:12px; margin-top:20px; }
+        .btn-cancel { background:#e2e8f0; flex:1; padding:12px; border:none; border-radius:12px; font-weight:600; cursor:pointer; }
+        .btn-save { background:#667eea; color:white; flex:1; padding:12px; border:none; border-radius:12px; font-weight:600; cursor:pointer; }
+        #qr-reader { width:100%; border-radius:20px; overflow:hidden; }
+        .toast { position:fixed; bottom:80px; left:20px; right:20px; background:#1e293b; color:white; padding:14px; border-radius:16px; text-align:center; font-size:14px; z-index:1100; display:none; }
+        .page { display:none; }
+        .page.active { display:block; }
+        .absensi-item { background:#f8fafc; border-radius:12px; padding:12px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; }
+        .status-hadir { color:#16a34a; font-weight:600; }
+        .status-terlambat { color:#d97706; font-weight:600; }
+        .status-alpa { color:#dc2626; font-weight:600; }
+        .filter-bar { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+        .filter-bar select, .filter-bar input { flex:1; padding:10px; border:1px solid #e2e8f0; border-radius:12px; font-size:13px; }
+        .empty-state { text-align:center; padding:40px; color:#94a3b8; }
+        .loading { text-align:center; padding:40px; color:#94a3b8; }
+        .qr-student-card { background:white; border-radius:16px; padding:20px; text-align:center; width:300px; margin:0 auto; }
+        .qr-student-card img { width:200px; height:200px; margin:10px auto; }
+    </style>
+</head>
+<body>
+<div class="header">
+    <div class="container" style="padding:0">
+        <div class="header-top">
+            <div class="logo-small"><i class="fas fa-qrcode"></i> AbsenKu</div>
+            <button class="logout-btn" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+        <div class="greeting">
+            <h2>Halo, <span id="guruName">Guru</span></h2>
+            <p>Selamat datang di dashboard absensi</p>
+            <span class="package-badge" id="packageBadge">Paket: -</span>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="stats-grid">
+        <div class="stat-card"><i class="fas fa-school"></i><div class="stat-value" id="totalKelas">-</div><div class="stat-label">Kelas</div></div>
+        <div class="stat-card"><i class="fas fa-users"></i><div class="stat-value" id="totalSiswa">-</div><div class="stat-label">Siswa</div></div>
+        <div class="stat-card"><i class="fas fa-check-circle"></i><div class="stat-value" id="hadirHariIni">-</div><div class="stat-label">Hadir Hari Ini</div></div>
+    </div>
+
+    <div id="pageDashboard" class="page active">
+        <div class="section">
+            <div class="section-title"><span>📊 Ringkasan Hari Ini</span></div>
+            <div id="ringkasanHariIni"><div class="loading">Loading...</div></div>
+        </div>
+        <div class="section">
+            <div class="section-title"><span>📱 Scan QR Code Absensi</span></div>
+            <button class="btn-add" style="width:100%; background:#22c55e; margin-bottom:16px" onclick="startScanner()"><i class="fas fa-camera"></i> Buka Scanner QR</button>
+            <div id="scannerContainer" style="display:none"><div id="qr-reader"></div><button class="btn-cancel" style="width:100%; margin-top:12px" onclick="stopScanner()">Tutup Scanner</button></div>
+        </div>
+        <div class="section">
+            <div class="section-title"><span>🏫 Kelas Terbaru</span><button class="btn-add" onclick="openKelasModal()">+</button></div>
+            <div id="kelasList"></div>
+        </div>
+    </div>
+
+    <div id="pageKelas" class="page">
+        <div class="section">
+            <div class="section-title"><span>🏫 Manajemen Kelas</span><button class="btn-add" onclick="openKelasModal()">+</button></div>
+            <div id="fullKelasList"></div>
+        </div>
+    </div>
+
+    <div id="pageSiswa" class="page">
+        <div class="section">
+            <div class="section-title"><span>👨‍🎓 Manajemen Siswa</span><button class="btn-add" onclick="openSiswaModal()">+</button></div>
+            <div style="display:flex; gap:10px; margin-bottom:16px;"><button id="btnGenerateQrMassal" class="btn-sm" style="background:#22c55e; color:white; flex:1; padding:10px;" onclick="showQrOptions()"><i class="fas fa-qrcode"></i> Generate QR Siswa</button></div>
+            <div class="filter-bar"><select id="filterKelasSiswa" onchange="loadSiswa()"><option value="">Semua Kelas</option></select></div>
+            <div id="siswaList"></div>
+        </div>
+    </div>
+
+    <div id="pageAbsensi" class="page">
+        <div class="section">
+            <div class="section-title"><span>📅 Riwayat Absensi</span><button class="btn-add" style="background:#ef4444; width:auto; padding:0 16px;" onclick="hapusSemuaRiwayat()"><i class="fas fa-trash"></i> Hapus Semua</button></div>
+            <div class="filter-bar"><select id="filterKelasAbsensi" onchange="loadRiwayatAbsensi()" style="flex:2;"><option value="">Semua Kelas</option></select><input type="date" id="filterTanggalAbsensi" onchange="loadRiwayatAbsensi()" style="flex:1;"><button class="btn-sm" style="background:#ef4444; color:white; padding:10px 16px;" onclick="hapusRiwayatBerdasarkanFilter()"><i class="fas fa-filter"></i> Hapus Filter Ini</button></div>
+            <div id="riwayatAbsensiList"></div>
+        </div>
+    </div>
+
+    <div id="pageProfile" class="page">
+        <div class="section">
+            <div class="section-title"><span>👤 Profil Saya</span></div>
+            <div id="profileInfo"></div>
+            <hr style="margin:20px 0">
+            <div class="section-title"><span>📞 Hubungi Admin</span></div>
+            <a id="waAdminLink" href="#" class="btn-add" style="display:block; text-align:center; text-decoration:none; background:#25D366; width:100%"><i class="fab fa-whatsapp"></i> Kirim Pesan ke Admin</a>
+        </div>
+    </div>
+</div>
+
+<div class="bottom-nav">
+    <div class="nav-item active" data-page="dashboard"><i class="fas fa-home"></i><span>Beranda</span></div>
+    <div class="nav-item" data-page="kelas"><i class="fas fa-school"></i><span>Kelas</span></div>
+    <div class="nav-item" data-page="siswa"><i class="fas fa-users"></i><span>Siswa</span></div>
+    <div class="nav-item" data-page="absensi"><i class="fas fa-calendar-check"></i><span>Absensi</span></div>
+    <div class="nav-item" data-page="profile"><i class="fas fa-user"></i><span>Profil</span></div>
+</div>
+
+<!-- Modal Kelas -->
+<div id="kelasModal" class="modal"><div class="modal-content"><h3 id="kelasModalTitle">Tambah Kelas</h3><input type="hidden" id="kelasId"><div class="form-group"><label>Nama Kelas</label><input type="text" id="kelasNama" placeholder="Contoh: XII IPA 1"></div><div class="form-group"><label>Jam Masuk (HH:MM)</label><input type="time" id="kelasJamMasuk" value="07:00"></div><div class="form-group"><label>Toleransi Keterlambatan (menit)</label><input type="number" id="kelasToleransi" value="15"></div><div class="modal-buttons"><button class="btn-cancel" onclick="closeKelasModal()">Batal</button><button class="btn-save" onclick="saveKelas()">Simpan</button></div></div></div>
+
+<!-- Modal Siswa -->
+<div id="siswaModal" class="modal"><div class="modal-content"><h3 id="siswaModalTitle">Tambah Siswa</h3><input type="hidden" id="siswaId"><div class="form-group"><label>NIS</label><input type="text" id="siswaNis" placeholder="Nomor Induk Siswa"></div><div class="form-group"><label>Nama Lengkap</label><input type="text" id="siswaNama" placeholder="Nama Siswa"></div><div class="form-group"><label>Kelas</label><select id="siswaKelasId"></select></div><div class="form-group"><label>Chat ID Telegram (dari @userinfobot)</label><input type="text" id="siswaTelegram" placeholder="Masukkan Chat ID"><small style="font-size:10px; color:#64748b;">Cara: Buka Telegram → @userinfobot → /start → copy ID</small></div><div class="modal-buttons"><button class="btn-cancel" onclick="closeSiswaModal()">Batal</button><button class="btn-save" onclick="saveSiswa()">Simpan</button></div></div></div>
+
+<!-- Modal Pilihan Generate QR -->
+<div id="qrOptionsModal" class="modal"><div class="modal-content" style="max-width:350px"><h3>Generate QR Code Siswa</h3><div class="form-group"><label>Pilih Kelas</label><select id="qrKelasSelect" style="width:100%;padding:12px;border-radius:12px;"><option value="">-- Pilih Kelas --</option></select></div><div class="form-group"><label>Pilih Siswa</label><select id="qrSiswaSelect" style="width:100%;padding:12px;border-radius:12px;"><option value="all">📦 Semua Siswa (Download Massal ZIP)</option></select></div><div class="modal-buttons"><button class="btn-cancel" onclick="closeQrOptionsModal()">Batal</button><button class="btn-save" onclick="generateAndDownloadQr()">Generate & Download</button></div></div></div>
+
+<!-- Modal Preview QR -->
+<div id="qrPreviewModal" class="modal"><div class="modal-content" style="max-width:400px;text-align:center"><h3 id="previewTitle">QR Code Siswa</h3><div id="qrPreviewContainer" style="margin:20px 0;display:flex;justify-content:center"><canvas id="qrPreviewCanvas" style="border:1px solid #e2e8f0;border-radius:16px;padding:16px;"></canvas></div><div class="modal-buttons"><button class="btn-cancel" onclick="closeQrPreviewModal()">Tutup</button><button class="btn-save" id="downloadPdfBtn" onclick="downloadQrAsPdf()">Download PDF</button></div></div></div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+    // ==================== KONFIGURASI ====================
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzVDA3Yhmne_ppKXNdTG4f_nkrITglnZL-OFStW5AjWjeUHQ_Tq9Qgk13JnrACL2yNiVQ/exec'; // GANTI DENGAN URL DEPLOY ANDA
+
+    let currentUser = null;
+    let kelasList = [];
+    let siswaList = [];
+    let html5QrCode = null;
+    let scannerActive = false;
+    let processingScan = false;  // Mencegah scan berulang
+    let currentQrData = null;
+    let intervalCekOtomatis = null;
+
+    // ==================== UTILITY ====================
+    async function apiCall(action, data = {}) {
+        const formData = new URLSearchParams();
+        formData.append('action', action);
+        for (let key in data) {
+            if (data[key] !== undefined && data[key] !== null) {
+                formData.append(key, data[key]);
+            }
+        }
+        try {
+            const response = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: formData.toString()
+            });
+            return await response.json();
+        } catch (err) {
+            console.error(err);
+            return { success: false, message: 'Gagal koneksi ke server' };
+        }
+    }
+
+    function showToast(msg) {
+        const toast = document.getElementById('toast');
+        toast.textContent = msg;
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 2500);
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m]));
+    }
+
+    // ==================== INIT & LOAD DATA ====================
+    async function init() {
+        const guruData = localStorage.getItem('guruData');
+        if (!guruData) {
+            window.location.href = 'index.html';
+            return;
+        }
+        currentUser = JSON.parse(guruData);
+        if (currentUser.masaAktif && new Date(currentUser.masaAktif) < new Date()) {
+            showToast('Paket Anda sudah habis. Silakan perpanjang!');
+        }
+        document.getElementById('guruName').textContent = currentUser.name || 'Guru';
+        document.getElementById('packageBadge').innerHTML = `Paket: ${currentUser.paket || '-'} ${currentUser.masaAktif ? `(sd ${new Date(currentUser.masaAktif).toLocaleDateString()})` : ''}`;
+        document.getElementById('waAdminLink').href = `https://wa.me/6289609745090?text=Halo Admin, saya ${currentUser.name} ingin bertanya tentang WebApp Absensi. Email: ${currentUser.email}`;
+
+        await loadData();
+        mulaiCekOtomatis();
+
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const page = item.dataset.page;
+                switchPage(page);
+            });
+        });
+    }
+
+    async function loadData() {
+        await loadKelas();
+        await loadSiswa();
+        await loadRingkasanHariIni();
+        updateStats();
+    }
+
+    async function loadKelas() {
+        const res = await apiCall('getKelas', { uidGuru: currentUser.uid });
+        if (res.success) {
+            kelasList = res.data;
+            renderKelasList();
+        } else {
+            showToast('Gagal memuat kelas: ' + res.message);
+        }
+    }
+
+    function renderKelasList() {
+        const dashContainer = document.getElementById('kelasList');
+        const fullContainer = document.getElementById('fullKelasList');
+        if (!kelasList.length) {
+            dashContainer.innerHTML = fullContainer.innerHTML = '<div class="empty-state">Belum ada kelas. Tambah kelas dulu!</div>';
+            return;
+        }
+        const latest = kelasList.slice(0,3);
+        
+        // Fungsi helper untuk memformat jam
+        function formatJam(jam) {
+            if (!jam) return '-';
+            if (typeof jam === 'string' && jam.includes('T')) {
+                // Format ISO timestamp -> ambil HH:MM
+                const date = new Date(jam);
+                return date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false });
+            }
+            return jam;
+        }
+        
+        dashContainer.innerHTML = latest.map(k => `
+            <div class="card-item">
+                <div class="card-info">
+                    <h4>${escapeHtml(k.nama)}</h4>
+                    <p>Jam: ${formatJam(k.jamMasuk)} | Toleransi: ${k.toleransi} menit</p>
+                </div>
+                <div class="card-actions">
+                    <button class="btn-icon btn-edit" onclick="editKelas('${k.idKelas}')"><i class="fas fa-edit"></i></button>
+                    <button class="btn-icon btn-delete" onclick="deleteKelas('${k.idKelas}')"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>
+        `).join('');
+        
+        fullContainer.innerHTML = kelasList.map(k => `
+            <div class="card-item">
+                <div class="card-info">
+                    <h4>${escapeHtml(k.nama)}</h4>
+                    <p>Jam: ${formatJam(k.jamMasuk)} | Toleransi: ${k.toleransi} menit</p>
+                </div>
+                <div class="card-actions">
+                    <button class="btn-icon btn-edit" onclick="editKelas('${k.idKelas}')"><i class="fas fa-edit"></i></button>
+                    <button class="btn-icon btn-delete" onclick="deleteKelas('${k.idKelas}')"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>
+        `).join('');
+
+        const opts = '<option value="">Pilih Kelas</option>' + kelasList.map(k => `<option value="${k.idKelas}">${escapeHtml(k.nama)}</option>`).join('');
+        document.getElementById('siswaKelasId').innerHTML = opts;
+        document.getElementById('filterKelasSiswa').innerHTML = '<option value="">Semua Kelas</option>' + kelasList.map(k => `<option value="${k.idKelas}">${escapeHtml(k.nama)}</option>`).join('');
+        document.getElementById('filterKelasAbsensi').innerHTML = '<option value="">Semua Kelas</option>' + kelasList.map(k => `<option value="${k.idKelas}">${escapeHtml(k.nama)}</option>`).join('');
+    }
+
+    async function loadSiswa() {
+        const kelasId = document.getElementById('filterKelasSiswa').value;
+        const res = await apiCall('getSiswa', { uidGuru: currentUser.uid, kelasId });
+        if (res.success) {
+            siswaList = res.data;
+            renderSiswaList();
+        } else {
+            showToast('Gagal memuat siswa: ' + res.message);
+        }
+    }
+
+    function renderSiswaList() {
+        const container = document.getElementById('siswaList');
+        if (!siswaList.length) {
+            container.innerHTML = '<div class="empty-state">Belum ada siswa. Tambah siswa dulu!</div>';
+            return;
+        }
+        container.innerHTML = siswaList.map(s => {
+            const kelas = kelasList.find(k => k.idKelas === s.kelasId);
+            return `
+                <div class="card-item">
+                    <div class="card-info">
+                        <h4>${escapeHtml(s.nama)}</h4>
+                        <p>NIS: ${s.nis} | Kelas: ${kelas ? kelas.nama : '-'}</p>
+                        <p style="font-size:11px">Telegram: ${s.telegram || '-'}</p>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-icon btn-qr" onclick="generateSingleQr('${s.idSiswa}')"><i class="fas fa-qrcode"></i></button>
+                        <button class="btn-icon btn-edit" onclick="editSiswa('${s.idSiswa}')"><i class="fas fa-edit"></i></button>
+                        <button class="btn-icon btn-delete" onclick="deleteSiswa('${s.idSiswa}')"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    async function loadRingkasanHariIni() {
+        const today = new Date().toISOString().split('T')[0];
+        let hadir = 0, terlambat = 0, alpa = 0;
+        for (const kelas of kelasList) {
+            const res = await apiCall('getAbsensi', { uidGuru: currentUser.uid, kelasId: kelas.idKelas, tanggal: today });
+            if (res.success) {
+                res.data.forEach(a => {
+                    if (a.status === 'Hadir') hadir++;
+                    else if (a.status === 'Terlambat') terlambat++;
+                    else if (a.status === 'Alpa') alpa++;
+                });
+            }
+        }
+        document.getElementById('ringkasanHariIni').innerHTML = `
+            <div style="display:flex; justify-content:space-between; text-align:center">
+                <div><span style="color:#16a34a; font-size:24px; font-weight:700">${hadir}</span><br><span style="font-size:12px">Hadir</span></div>
+                <div><span style="color:#d97706; font-size:24px; font-weight:700">${terlambat}</span><br><span style="font-size:12px">Terlambat</span></div>
+                <div><span style="color:#dc2626; font-size:24px; font-weight:700">${alpa}</span><br><span style="font-size:12px">Alpa</span></div>
+            </div>
+        `;
+        document.getElementById('hadirHariIni').textContent = hadir;
+    }
+
+    function updateStats() {
+        document.getElementById('totalKelas').textContent = kelasList.length;
+        document.getElementById('totalSiswa').textContent = siswaList.length;
+    }
+
+    // ==================== KELAS CRUD ====================
+    window.openKelasModal = (id = null) => {
+        document.getElementById('kelasModalTitle').textContent = id ? 'Edit Kelas' : 'Tambah Kelas';
+        document.getElementById('kelasId').value = id || '';
+        document.getElementById('kelasNama').value = '';
+        document.getElementById('kelasJamMasuk').value = '07:00';
+        document.getElementById('kelasToleransi').value = '15';
+        if (id) {
+            const kelas = kelasList.find(k => k.idKelas === id);
+            if (kelas) {
+                document.getElementById('kelasNama').value = kelas.nama;
+                let jamMasuk = kelas.jamMasuk;
+                // Jika format timestamp, konversi ke HH:MM
+                if (typeof jamMasuk === 'string' && jamMasuk.includes('T')) {
+                    const date = new Date(jamMasuk);
+                    jamMasuk = date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false });
+                }
+                document.getElementById('kelasJamMasuk').value = jamMasuk;
+                document.getElementById('kelasToleransi').value = kelas.toleransi;
+            }
+        }
+        document.getElementById('kelasModal').style.display = 'flex';
+    };
+    window.editKelas = (id) => openKelasModal(id);
+    window.saveKelas = async () => {
+        const id = document.getElementById('kelasId').value;
+        const data = {
+            uidGuru: currentUser.uid,
+            nama: document.getElementById('kelasNama').value,
+            jamMasuk: document.getElementById('kelasJamMasuk').value,
+            toleransi: parseInt(document.getElementById('kelasToleransi').value)
+        };
+        if (id) data.idKelas = id;
+        const res = await apiCall('saveKelas', data);
+        if (res.success) {
+            showToast('Kelas tersimpan');
+            closeKelasModal();
+            await loadKelas();
+            updateStats();
+        } else {
+            showToast('Gagal: ' + res.message);
+        }
+    };
+    window.deleteKelas = async (id) => {
+        if (confirm('Yakin ingin menghapus kelas ini?')) {
+            const res = await apiCall('deleteKelas', { idKelas: id, uidGuru: currentUser.uid });
+            if (res.success) {
+                showToast('Kelas dihapus');
+                await loadKelas();
+                await loadSiswa();
+                updateStats();
+            } else {
+                showToast('Gagal: ' + res.message);
+            }
+        }
+    };
+    window.closeKelasModal = () => document.getElementById('kelasModal').style.display = 'none';
+
+    // ==================== SISWA CRUD ====================
+    window.openSiswaModal = (id = null) => {
+        document.getElementById('siswaModalTitle').textContent = id ? 'Edit Siswa' : 'Tambah Siswa';
+        document.getElementById('siswaId').value = id || '';
+        document.getElementById('siswaNis').value = '';
+        document.getElementById('siswaNama').value = '';
+        document.getElementById('siswaTelegram').value = '';
+        document.getElementById('siswaKelasId').value = '';
+        if (id) {
+            const siswa = siswaList.find(s => s.idSiswa === id);
+            if (siswa) {
+                document.getElementById('siswaNis').value = siswa.nis;
+                document.getElementById('siswaNama').value = siswa.nama;
+                document.getElementById('siswaTelegram').value = siswa.telegram || '';
+                document.getElementById('siswaKelasId').value = siswa.kelasId;
+            }
+        }
+        document.getElementById('siswaModal').style.display = 'flex';
+    };
+    window.editSiswa = (id) => openSiswaModal(id);
+    window.saveSiswa = async () => {
+        const id = document.getElementById('siswaId').value;
+        const data = {
+            uidGuru: currentUser.uid,
+            nis: document.getElementById('siswaNis').value,
+            nama: document.getElementById('siswaNama').value,
+            kelasId: document.getElementById('siswaKelasId').value,
+            telegram: document.getElementById('siswaTelegram').value
+        };
+        if (!data.nis || !data.nama || !data.kelasId) {
+            showToast('NIS, Nama, dan Kelas wajib diisi');
+            return;
+        }
+        if (id) data.idSiswa = id;
+        const res = await apiCall('saveSiswa', data);
+        if (res.success) {
+            showToast('Siswa tersimpan');
+            closeSiswaModal();
+            await loadSiswa();
+            updateStats();
+        } else {
+            showToast('Gagal: ' + res.message);
+        }
+    };
+    window.deleteSiswa = async (id) => {
+        if (confirm('Yakin ingin menghapus siswa ini?')) {
+            const res = await apiCall('deleteSiswa', { idSiswa: id, uidGuru: currentUser.uid });
+            if (res.success) {
+                showToast('Siswa dihapus');
+                await loadSiswa();
+                updateStats();
+            } else {
+                showToast('Gagal: ' + res.message);
+            }
+        }
+    };
+    window.closeSiswaModal = () => document.getElementById('siswaModal').style.display = 'none';
+
+    // ==================== SCANNER QR (DIPERBAIKI) ====================
+    window.startScanner = () => {
+        if (scannerActive) {
+            showToast('Scanner sudah aktif');
+            return;
+        }
+        const scannerDiv = document.getElementById('scannerContainer');
+        scannerDiv.style.display = 'block';
+        if (!html5QrCode) {
+            html5QrCode = new Html5Qrcode("qr-reader");
+        }
+        html5QrCode.start(
+            { facingMode: "environment" },
+            { fps: 10, qrbox: { width: 250, height: 250 } },
+            async (decodedText) => {
+                // Hentikan scanner segera agar tidak membaca QR yang sama berulang
+                await stopScanner();
+                // Proses QR hanya jika tidak sedang diproses
+                if (!processingScan) {
+                    await processScanResult(decodedText);
+                }
+            },
+            (errorMessage) => {
+                // Abaikan error scanning biasa
+                // console.log(errorMessage);
+            }
+        ).catch(err => {
+            showToast('Gagal akses kamera: ' + err);
+            scannerDiv.style.display = 'none';
+            scannerActive = false;
+        });
+        scannerActive = true;
+    };
+
+    window.stopScanner = async () => {
+        if (html5QrCode && scannerActive) {
+            try {
+                await html5QrCode.stop();
+            } catch(e) {}
+            scannerActive = false;
+        }
+        document.getElementById('scannerContainer').style.display = 'none';
+    };
+
+    async function processScanResult(data) {
+        processingScan = true;
+        try {
+            const qrData = JSON.parse(data);
+            if (!qrData.siswaId || !qrData.nis || !qrData.nama) {
+                showToast('QR Code tidak valid (bukan QR siswa)');
+                return;
+            }
+            // Ambil semua siswa guru
+            const siswaRes = await apiCall('getSiswa', { uidGuru: currentUser.uid });
+            if (!siswaRes.success) {
+                showToast('Gagal mengambil data siswa');
+                return;
+            }
+            const siswa = siswaRes.data.find(s => s.idSiswa === qrData.siswaId);
+            if (!siswa) {
+                showToast('Siswa tidak ditemukan dalam daftar Anda');
+                return;
+            }
+            const today = new Date().toISOString().split('T')[0];
+            // Cek apakah sudah absen hari ini
+            const absensiRes = await apiCall('getAbsensi', { uidGuru: currentUser.uid, kelasId: siswa.kelasId, tanggal: today });
+            if (absensiRes.success && absensiRes.data.some(a => a.siswaId === siswa.idSiswa)) {
+                showToast(`${siswa.nama} sudah absen hari ini`);
+                return;
+            }
+            const kelas = kelasList.find(k => k.idKelas === siswa.kelasId);
+            if (!kelas) {
+                showToast('Kelas tidak ditemukan');
+                return;
+            }
+            
+            // ** PERBAIKAN: Konversi jamMasuk ke string HH:MM jika masih timestamp **
+            let jamMasukStr = kelas.jamMasuk;
+            if (jamMasukStr && typeof jamMasukStr === 'string' && jamMasukStr.includes('T')) {
+                const date = new Date(jamMasukStr);
+                jamMasukStr = date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false });
+            }
+            if (!jamMasukStr || !jamMasukStr.includes(':')) {
+                showToast('Format jam kelas tidak valid');
+                return;
+            }
+            
+            const jamMasukMenit = timeToMinutes(jamMasukStr);
+            const now = new Date();
+            const nowMenit = now.getHours() * 60 + now.getMinutes();
+            const toleransi = parseInt(kelas.toleransi) || 0;
+            const selisih = nowMenit - jamMasukMenit;
+            
+            let status = 'Hadir';
+            let keterangan = '';
+            if (selisih > toleransi) {
+                status = 'Terlambat';
+                keterangan = `Terlambat ${selisih} menit`;
+            }
+            // Simpan absensi
+            const simpan = await apiCall('saveAbsensi', {
+                uidGuru: currentUser.uid,
+                kelasId: siswa.kelasId,
+                siswaId: siswa.idSiswa,
+                tanggal: today,
+                jam: now.toLocaleTimeString('id-ID'),
+                status: status,
+                keterangan: keterangan
+            });
+            if (simpan.success) {
+                showToast(`✅ ${siswa.nama} - ${status}`);
+                if (status === 'Terlambat' && siswa.telegram) {
+                    sendTelegramNotification(siswa.telegram, siswa.nama, kelas.nama, status, keterangan);
+                }
+                await loadRingkasanHariIni();
+                updateStats();
+            } else {
+                showToast('Gagal simpan absensi: ' + simpan.message);
+            }
+        } catch (err) {
+            console.error(err);
+            showToast('QR Code tidak valid atau error: ' + err.message);
+        } finally {
+            processingScan = false;
+        }
+    }
+
+    // Helper konversi HH:MM ke menit
+    function timeToMinutes(timeStr) {
+        const [hour, minute] = timeStr.split(':').map(Number);
+        return hour * 60 + minute;
+    }
+
+    async function sendTelegramNotification(telegramId, siswaNama, kelasNama, status, keterangan) {
+        if (!telegramId) return;
+        const BOT_TOKEN = "8723214264:AAEIqOPa580lu6AzuAQLL-pecG_4hUTBc4o"; // ganti dengan bot token Anda
+        const message = `⚠️ *NOTIFIKASI ABSENSI*\n\nNama: ${siswaNama}\nKelas: ${kelasNama}\nStatus: ${status}\n${keterangan ? 'Keterangan: '+keterangan : ''}\nWaktu: ${new Date().toLocaleString()}`;
+        const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+        try {
+            await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: telegramId, text: message, parse_mode: 'Markdown' })
+            });
+        } catch(e) { console.log(e); }
+    }
+
+    // ==================== RIWAYAT ABSENSI ====================
+    window.loadRiwayatAbsensi = async () => {
+        const kelasId = document.getElementById('filterKelasAbsensi').value;
+        const tanggal = document.getElementById('filterTanggalAbsensi').value;
+        const res = await apiCall('getAbsensi', { uidGuru: currentUser.uid });
+        if (!res.success) {
+            document.getElementById('riwayatAbsensiList').innerHTML = '<div class="empty-state">Gagal memuat data</div>';
+            return;
+        }
+        let data = res.data;
+        if (kelasId) data = data.filter(a => a.kelasId === kelasId);
+        if (tanggal) data = data.filter(a => a.tanggal === tanggal);
+        data.sort((a,b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+        const container = document.getElementById('riwayatAbsensiList');
+        if (!data.length) {
+            container.innerHTML = '<div class="empty-state">Belum ada data absensi</div>';
+            return;
+        }
+        container.innerHTML = data.map(a => {
+            const kelas = kelasList.find(k => k.idKelas === a.kelasId);
+            const namaSiswa = siswaList.find(s => s.idSiswa === a.siswaId)?.nama || a.siswaId;
+            return `
+                <div class="absensi-item">
+                    <div>
+                        <strong>${escapeHtml(namaSiswa)}</strong><br>
+                        <span style="font-size:11px">${kelas ? kelas.nama : '-'} | ${a.tanggal} | ${a.jam}</span><br>
+                        <span class="status-${a.status === 'Hadir' ? 'hadir' : (a.status === 'Terlambat' ? 'terlambat' : 'alpa')}">${a.status}</span>
+                        ${a.keterangan ? `<span style="font-size:10px; color:#64748b"> (${a.keterangan})</span>` : ''}
+                    </div>
+                    <button class="btn-icon btn-delete" onclick="hapusSatuAbsensi('${a.idAbsensi}')" style="background:#fee2e2; padding:8px 12px; border-radius:12px;"><i class="fas fa-trash"></i></button>
+                </div>
+            `;
+        }).join('');
+    };
+    window.hapusSatuAbsensi = async (idAbsensi) => {
+        if (confirm('Hapus riwayat ini?')) {
+            const res = await apiCall('deleteAbsensi', { idAbsensi, uidGuru: currentUser.uid });
+            if (res.success) {
+                showToast('Absensi dihapus');
+                await loadRiwayatAbsensi();
+                await loadRingkasanHariIni();
+            } else showToast('Gagal: '+res.message);
+        }
+    };
+    window.hapusSemuaRiwayat = async () => {
+        if (confirm('⚠️ Hapus SEMUA riwayat absensi? Data tidak bisa dikembalikan.')) {
+            const res = await apiCall('deleteAllAbsensi', { uidGuru: currentUser.uid });
+            if (res.success) {
+                showToast('Semua absensi dihapus');
+                await loadRiwayatAbsensi();
+                await loadRingkasanHariIni();
+            } else showToast('Gagal: '+res.message);
+        }
+    };
+    window.hapusRiwayatBerdasarkanFilter = async () => {
+        const kelasId = document.getElementById('filterKelasAbsensi').value;
+        const tanggal = document.getElementById('filterTanggalAbsensi').value;
+        if (!kelasId && !tanggal) {
+            showToast('Pilih filter kelas atau tanggal dulu');
+            return;
+        }
+        if (confirm('Hapus absensi sesuai filter ini?')) {
+            const res = await apiCall('deleteAbsensiByFilter', { uidGuru: currentUser.uid, kelasId, tanggal });
+            if (res.success) {
+                showToast('Absensi dihapus sesuai filter');
+                await loadRiwayatAbsensi();
+                await loadRingkasanHariIni();
+            } else showToast('Gagal: '+res.message);
+        }
+    };
+
+    // ==================== QR CODE GENERATOR ====================
+    window.showQrOptions = async () => {
+        const kelasSelect = document.getElementById('qrKelasSelect');
+        kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+        for (const kelas of kelasList) {
+            kelasSelect.innerHTML += `<option value="${kelas.idKelas}">${escapeHtml(kelas.nama)}</option>`;
+        }
+        kelasSelect.onchange = async () => {
+            const kelasId = kelasSelect.value;
+            const siswaSelect = document.getElementById('qrSiswaSelect');
+            if (!kelasId) {
+                siswaSelect.innerHTML = '<option value="all">📦 Semua Siswa (ZIP)</option>';
+                return;
+            }
+            siswaSelect.innerHTML = '<option value="all">📦 Semua Siswa (ZIP)</option><option disabled>---</option>';
+            const res = await apiCall('getSiswa', { uidGuru: currentUser.uid, kelasId });
+            if (res.success) {
+                res.data.forEach(s => {
+                    siswaSelect.innerHTML += `<option value="${s.idSiswa}">👤 ${escapeHtml(s.nama)} (${s.nis})</option>`;
+                });
+            }
+        };
+        document.getElementById('qrOptionsModal').style.display = 'flex';
+    };
+    window.closeQrOptionsModal = () => document.getElementById('qrOptionsModal').style.display = 'none';
+    window.generateAndDownloadQr = async () => {
+        const kelasId = document.getElementById('qrKelasSelect').value;
+        const siswaId = document.getElementById('qrSiswaSelect').value;
+        if (!kelasId) { showToast('Pilih kelas dulu'); return; }
+        const kelas = kelasList.find(k => k.idKelas === kelasId);
+        if (!kelas) return;
+        if (siswaId === 'all') {
+            showToast('Membuat ZIP...');
+            const res = await apiCall('getSiswa', { uidGuru: currentUser.uid, kelasId });
+            if (!res.success || !res.data.length) { showToast('Tidak ada siswa'); return; }
+            const zip = new JSZip();
+            const folder = zip.folder(`QR_${kelas.nama.replace(/[^a-zA-Z0-9]/g, '_')}`);
+            for (const siswa of res.data) {
+                const qrData = JSON.stringify({ siswaId: siswa.idSiswa, nis: siswa.nis, nama: siswa.nama, kelasId, kelasNama: kelas.nama });
+                const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrData)}`;
+                const response = await fetch(qrUrl);
+                const blob = await response.blob();
+                folder.file(`${siswa.nis}_${siswa.nama.replace(/[^a-zA-Z0-9]/g, '_')}.png`, blob);
+            }
+            const content = await zip.generateAsync({ type: "blob" });
+            saveAs(content, `QR_${kelas.nama.replace(/[^a-zA-Z0-9]/g, '_')}.zip`);
+            showToast('Download ZIP selesai');
+        } else {
+            const siswaRes = await apiCall('getSiswa', { uidGuru: currentUser.uid });
+            const siswa = siswaRes.data.find(s => s.idSiswa === siswaId);
+            if (siswa) await previewQrCode(siswa, kelas);
+        }
+        closeQrOptionsModal();
+    };
+    async function previewQrCode(siswa, kelas) {
+        const qrData = JSON.stringify({ siswaId: siswa.idSiswa, nis: siswa.nis, nama: siswa.nama, kelasId: kelas.idKelas, kelasNama: kelas.nama });
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(qrData)}`;
+        currentQrData = { siswa, kelas, qrData, qrUrl };
+        document.getElementById('previewTitle').innerHTML = `QR Code - ${escapeHtml(siswa.nama)}`;
+        document.getElementById('qrPreviewContainer').innerHTML = `
+            <div class="qr-student-card">
+                <img src="${qrUrl}" alt="QR Code" id="previewQrImg">
+                <h4>${escapeHtml(siswa.nama)}</h4>
+                <p>NIS: ${siswa.nis}</p>
+                <p>Kelas: ${escapeHtml(kelas.nama)}</p>
+                <p style="font-size:10px; margin-top:8px;">Scan untuk absensi</p>
+            </div>
+        `;
+        document.getElementById('qrPreviewModal').style.display = 'flex';
+    }
+    window.closeQrPreviewModal = () => document.getElementById('qrPreviewModal').style.display = 'none';
+    window.downloadQrAsPdf = async () => {
+        if (!currentQrData) return;
+        const { siswa, kelas, qrUrl } = currentQrData;
+        if (typeof window.jspdf === 'undefined') {
+            showToast('Library PDF belum siap, refresh halaman');
+            return;
+        }
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+        const img = new Image();
+        img.crossOrigin = "Anonymous";
+        img.src = qrUrl;
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            const imgData = canvas.toDataURL('image/png');
+            doc.setFontSize(18);
+            doc.text('QR Code Absensi', 105, 30, { align: 'center' });
+            doc.setFontSize(12);
+            doc.text(`Nama: ${siswa.nama}`, 105, 50, { align: 'center' });
+            doc.text(`NIS: ${siswa.nis}`, 105, 60, { align: 'center' });
+            doc.text(`Kelas: ${kelas.nama}`, 105, 70, { align: 'center' });
+            doc.addImage(imgData, 'PNG', 55, 80, 100, 100);
+            doc.setFontSize(10);
+            doc.text('Scan QR Code untuk melakukan absensi', 105, 200, { align: 'center' });
+            doc.text('AbsenKu - Sistem Absensi Digital', 105, 210, { align: 'center' });
+            doc.save(`QR_${siswa.nis}_${siswa.nama}.pdf`);
+            showToast('PDF berhasil didownload');
+            closeQrPreviewModal();
+        };
+        img.onerror = () => showToast('Gagal memuat QR Code');
+    };
+    window.generateSingleQr = async (siswaId) => {
+        const res = await apiCall('getSiswa', { uidGuru: currentUser.uid });
+        const siswa = res.data.find(s => s.idSiswa === siswaId);
+        if (siswa) {
+            const kelas = kelasList.find(k => k.idKelas === siswa.kelasId);
+            if (kelas) await previewQrCode(siswa, kelas);
+            else showToast('Kelas tidak ditemukan');
+        } else showToast('Siswa tidak ditemukan');
+    };
+
+    // ==================== CEK OTOMATIS ====================
+    async function cekDanKirimNotifikasiAbsensi() {
+        const today = new Date().toISOString().split('T')[0];
+        const now = new Date();
+        const nowMenit = now.getHours() * 60 + now.getMinutes();
+        for (const kelas of kelasList) {
+            const jamMasukMenit = timeToMinutes(kelas.jamMasuk);
+            const toleransi = parseInt(kelas.toleransi) || 0;
+            const batasMenit = jamMasukMenit + toleransi;
+            if (nowMenit < batasMenit) continue;
+            const siswaRes = await apiCall('getSiswa', { uidGuru: currentUser.uid, kelasId: kelas.idKelas });
+            if (!siswaRes.success) continue;
+            const absensiRes = await apiCall('getAbsensi', { uidGuru: currentUser.uid, kelasId: kelas.idKelas, tanggal: today });
+            const sudahAbsenIds = absensiRes.success ? absensiRes.data.map(a => a.siswaId) : [];
+            for (const siswa of siswaRes.data) {
+                if (sudahAbsenIds.includes(siswa.idSiswa)) continue;
+                if (siswa.telegram) {
+                    await sendTelegramNotification(siswa.telegram, siswa.nama, kelas.nama, 'Alpa', 'Tidak hadir tanpa keterangan');
+                }
+                await apiCall('saveAbsensi', {
+                    uidGuru: currentUser.uid,
+                    kelasId: kelas.idKelas,
+                    siswaId: siswa.idSiswa,
+                    tanggal: today,
+                    jam: now.toLocaleTimeString('id-ID'),
+                    status: 'Alpa',
+                    keterangan: 'Tidak hadir (otomatis)'
+                });
+            }
+        }
+        await loadRingkasanHariIni();
+    }
+    function mulaiCekOtomatis() {
+        if (intervalCekOtomatis) clearInterval(intervalCekOtomatis);
+        intervalCekOtomatis = setInterval(() => {
+            const now = new Date();
+            if (now.getHours() < 23) cekDanKirimNotifikasiAbsensi();
+        }, 300000);
+    }
+
+    // ==================== NAVIGASI & LOGOUT ====================
+    function switchPage(page) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(`page${page.charAt(0).toUpperCase() + page.slice(1)}`).classList.add('active');
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.classList.remove('active');
+            if (item.dataset.page === page) item.classList.add('active');
+        });
+        if (page === 'absensi') loadRiwayatAbsensi();
+        if (page === 'siswa') loadSiswa();
+    }
+    window.handleLogout = () => {
+        localStorage.removeItem('guruData');
+        window.location.href = 'index.html';
+    };
+    // Jalankan init
+    init();
+</script>
+</body>
+</html>

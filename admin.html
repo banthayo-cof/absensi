@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - AbsenKu</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Inter',sans-serif; background:#f1f5f9; padding:16px; }
+        .container { max-width:500px; margin:0 auto; }
+        .header { background:linear-gradient(135deg,#667eea,#764ba2); border-radius:24px; padding:20px; margin-bottom:20px; color:white; }
+        .header h1 { font-size:20px; margin-bottom:4px; }
+        .stats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:20px; }
+        .stat-card { background:white; border-radius:20px; padding:16px 12px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
+        .stat-icon { font-size:24px; margin-bottom:8px; }
+        .stat-value { font-size:22px; font-weight:800; color:#1e293b; }
+        .stat-label { font-size:11px; color:#64748b; margin-top:4px; }
+        .section { background:white; border-radius:24px; padding:20px; margin-bottom:20px; }
+        .section-title { font-size:18px; font-weight:700; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; }
+        .search-box { background:#f1f5f9; border-radius:16px; padding:12px 16px; margin-bottom:16px; display:flex; align-items:center; gap:12px; }
+        .search-box i { color:#94a3b8; }
+        .search-box input { flex:1; border:none; background:transparent; outline:none; font-size:14px; }
+        .guru-item { background:#f8fafc; border-radius:16px; padding:14px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; }
+        .guru-info h4 { font-size:15px; font-weight:700; margin-bottom:4px; }
+        .guru-info p { font-size:12px; color:#64748b; }
+        .badge { padding:4px 10px; border-radius:20px; font-size:11px; font-weight:600; display:inline-block; margin-top:6px; }
+        .badge-pending { background:#fef3c7; color:#d97706; }
+        .badge-aktif { background:#dcfce7; color:#16a34a; }
+        .btn-sm { padding:8px 14px; border:none; border-radius:12px; font-size:12px; font-weight:600; cursor:pointer; }
+        .btn-success { background:#22c55e; color:white; }
+        .btn-danger { background:#ef4444; color:white; }
+        .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center; padding:20px; }
+        .modal-content { background:white; border-radius:28px; padding:24px; max-width:400px; width:100%; }
+        .form-group { margin-bottom:16px; }
+        .form-group label { display:block; font-size:13px; margin-bottom:6px; font-weight:600; }
+        .form-group input, .form-group select { width:100%; padding:12px; border:1px solid #e2e8f0; border-radius:12px; font-size:14px; }
+        .tabs { display:flex; gap:8px; margin-bottom:16px; border-bottom:1px solid #e2e8f0; }
+        .tab { padding:10px 16px; font-size:14px; font-weight:600; cursor:pointer; color:#64748b; border-bottom:2px solid transparent; }
+        .tab.active { color:#667eea; border-bottom-color:#667eea; }
+        .tab-content { display:none; }
+        .tab-content.active { display:block; }
+        .toast { position:fixed; bottom:20px; left:20px; right:20px; background:#1e293b; color:white; padding:14px; border-radius:16px; text-align:center; font-size:14px; z-index:1100; display:none; }
+        .loading { text-align:center; padding:40px; color:#64748b; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header"><h1><i class="fas fa-shield-alt"></i> Admin Panel</h1><p>Kelola guru & absensi</p></div>
+    <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon"><i class="fas fa-chalkboard-user"></i></div><div class="stat-value" id="totalGuru">0</div><div class="stat-label">Total Guru</div></div>
+        <div class="stat-card"><div class="stat-icon"><i class="fas fa-clock"></i></div><div class="stat-value" id="totalPending">0</div><div class="stat-label">Pending</div></div>
+        <div class="stat-card"><div class="stat-icon"><i class="fas fa-check-circle"></i></div><div class="stat-value" id="totalAktif">0</div><div class="stat-label">Aktif</div></div>
+    </div>
+    <div class="section">
+        <div class="section-title"><span>📋 Manajemen Guru</span><button class="btn-sm" style="background:#667eea;color:white" onclick="refreshData()"><i class="fas fa-sync-alt"></i> Refresh</button></div>
+        <div class="search-box"><i class="fas fa-search"></i><input type="text" id="searchGuru" placeholder="Cari nama atau email..." onkeyup="filterGuru()"></div>
+        <div id="guruList"><div class="loading">Loading...</div></div>
+    </div>
+    <div class="section">
+        <div class="tabs">
+            <div class="tab active" data-tab="kelas" onclick="switchAdminTab('kelas')">📚 Kelas</div>
+            <div class="tab" data-tab="absensi" onclick="switchAdminTab('absensi')">📅 Absensi</div>
+            <div class="tab" data-tab="setting" onclick="switchAdminTab('setting')">⚙️ Setting</div>
+        </div>
+        <div id="kelasTab" class="tab-content active"><div id="kelasList"><p style="color:#64748b;text-align:center;padding:20px">Pilih guru untuk melihat kelasnya</p></div></div>
+        <div id="absensiTab" class="tab-content"><select id="filterGuruAbsensi" onchange="loadAbsensi()" style="width:100%;padding:10px;border-radius:12px;margin-bottom:12px"><option value="">Pilih Guru</option></select><div id="absensiList"></div></div>
+        <div id="settingTab" class="tab-content">
+            <div class="form-group"><label>Telegram Bot Token</label><input type="text" id="botToken" placeholder="Masukkan Token Bot Telegram"></div>
+            <div class="form-group"><label>Admin Chat ID</label><input type="text" id="adminChatId" placeholder="Masukkan Chat ID Admin"></div>
+            <button class="btn-sm" style="background:#667eea;color:white;width:100%;padding:12px" onclick="saveSettings()">Simpan Pengaturan</button>
+            <button class="btn-sm" style="background:#22c55e;color:white;width:100%;padding:12px;margin-top:10px" onclick="testTelegram()">Test Kirim Pesan</button>
+        </div>
+    </div>
+</div>
+<div id="modalAktifkan" class="modal"><div class="modal-content"><h3>Aktifkan Guru</h3><div class="form-group"><label>Masa Aktif (hari)</label><input type="number" id="masaAktifHari" value="30"></div><div style="display:flex;gap:12px;margin-top:20px"><button class="btn-sm" style="flex:1;background:#e2e8f0" onclick="closeModal()">Batal</button><button class="btn-sm" style="flex:1;background:#22c55e;color:white" onclick="confirmAktifkan()">Aktifkan</button></div></div></div>
+<div id="toast" class="toast"></div>
+
+<script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzVDA3Yhmne_ppKXNdTG4f_nkrITglnZL-OFStW5AjWjeUHQ_Tq9Qgk13JnrACL2yNiVQ/exec'; // GANTI DENGAN URL DEPLOY ANDA
+    let allGuruData = [];
+    let currentGuruId = null;
+
+    async function apiCall(action, data = {}) {
+        const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action, ...data }) });
+        return res.json();
+    }
+
+    async function loadGuruFromFirestore() {
+        const container = document.getElementById('guruList');
+        container.innerHTML = '<div class="loading">Loading...</div>';
+        const res = await apiCall('getGuruList');
+        if (res.success) {
+            allGuruData = res.data;
+            updateStats();
+            renderGuruList(allGuruData);
+            const select = document.getElementById('filterGuruAbsensi');
+            select.innerHTML = '<option value="">Pilih Guru</option>';
+            allGuruData.forEach(g => select.innerHTML += `<option value="${g.email}">${g.name || g.email}</option>`);
+        } else {
+            container.innerHTML = `<p style="text-align:center;color:#ef4444">Error: ${res.message}</p>`;
+        }
+    }
+
+    function updateStats() {
+        const total = allGuruData.length;
+        const pending = allGuruData.filter(g => g.status === 'pending').length;
+        const aktif = allGuruData.filter(g => g.status === 'aktif').length;
+        document.getElementById('totalGuru').textContent = total;
+        document.getElementById('totalPending').textContent = pending;
+        document.getElementById('totalAktif').textContent = aktif;
+    }
+
+    function renderGuruList(guruList) {
+        const container = document.getElementById('guruList');
+        if (!guruList.length) { container.innerHTML = '<p style="text-align:center;color:#64748b">Belum ada guru</p>'; return; }
+        container.innerHTML = guruList.map(g => `
+            <div class="guru-item">
+                <div class="guru-info">
+                    <h4>${escapeHtml(g.name)}</h4>
+                    <p>${g.email} | Paket: ${g.paket}</p>
+                    <span class="badge ${g.status === 'aktif' ? 'badge-aktif' : 'badge-pending'}">${g.status === 'aktif' ? '✅ Aktif' : '⏳ Pending'}</span>
+                </div>
+                <div>${g.status === 'pending' ? `<button class="btn-sm btn-success" onclick="openAktifkanModal('${g.uid}')">Aktifkan</button>` : `<button class="btn-sm btn-danger" onclick="deleteGuru('${g.uid}')">Hapus</button>`}</div>
+            </div>
+        `).join('');
+    }
+
+    window.filterGuru = () => {
+        const keyword = document.getElementById('searchGuru').value.toLowerCase();
+        const filtered = allGuruData.filter(g => (g.name || '').toLowerCase().includes(keyword) || (g.email || '').toLowerCase().includes(keyword));
+        renderGuruList(filtered);
+    };
+
+    window.openAktifkanModal = (uid) => { currentGuruId = uid; document.getElementById('modalAktifkan').style.display = 'flex'; };
+    window.closeModal = () => { document.getElementById('modalAktifkan').style.display = 'none'; currentGuruId = null; };
+    window.confirmAktifkan = async () => {
+        const hari = parseInt(document.getElementById('masaAktifHari').value);
+        const tglExpired = new Date(); tglExpired.setDate(tglExpired.getDate() + hari);
+        const res = await apiCall('aktifkanGuru', { uid: currentGuruId, tglAktif: new Date().toISOString(), tglExpired: tglExpired.toISOString() });
+        if (res.success) { showToast('✅ Guru diaktifkan'); closeModal(); loadGuruFromFirestore(); }
+        else showToast('❌ Gagal: ' + res.message);
+    };
+    window.deleteGuru = async (uid) => {
+        if (confirm('Yakin hapus guru ini?')) {
+            const res = await apiCall('deleteGuru', { uid });
+            if (res.success) { showToast('✅ Guru dihapus'); loadGuruFromFirestore(); }
+            else showToast('❌ Gagal: ' + res.message);
+        }
+    };
+    window.refreshData = () => loadGuruFromFirestore();
+
+    window.loadAbsensi = async () => {
+        const email = document.getElementById('filterGuruAbsensi').value;
+        const container = document.getElementById('absensiList');
+        if (!email) { container.innerHTML = '<p style="color:#64748b;text-align:center">Pilih guru</p>'; return; }
+        container.innerHTML = '<div class="loading">Memuat...</div>';
+        const res = await apiCall('getAbsensi', { email });
+        if (res.success && res.data.length) {
+            container.innerHTML = res.data.map(a => `<div class="absensi-item">${a.tanggal} - ${a.namaSiswa} - ${a.status}</div>`).join('');
+        } else {
+            container.innerHTML = '<p style="color:#64748b;text-align:center">Belum ada absensi</p>';
+        }
+    };
+
+    async function loadSettings() {
+        const res = await apiCall('getTelegramConfig');
+        if (res.success && res.data) {
+            document.getElementById('botToken').value = res.data.botToken || '';
+            document.getElementById('adminChatId').value = res.data.adminChatId || '';
+        }
+    }
+    window.saveSettings = async () => {
+        const botToken = document.getElementById('botToken').value;
+        const adminChatId = document.getElementById('adminChatId').value;
+        const res = await apiCall('saveTelegramConfig', { botToken, adminChatId });
+        showToast(res.success ? 'Pengaturan disimpan' : 'Gagal: ' + res.message);
+    };
+    window.testTelegram = async () => {
+        const botToken = document.getElementById('botToken').value;
+        const adminChatId = document.getElementById('adminChatId').value;
+        const res = await apiCall('sendTelegramTest', { botToken, adminChatId });
+        showToast(res.success ? 'Pesan uji terkirim' : 'Gagal: ' + res.message);
+    };
+
+    window.switchAdminTab = (tab) => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        if (tab === 'kelas') { document.querySelector('[data-tab="kelas"]').classList.add('active'); document.getElementById('kelasTab').classList.add('active'); }
+        else if (tab === 'absensi') { document.querySelector('[data-tab="absensi"]').classList.add('active'); document.getElementById('absensiTab').classList.add('active'); loadAbsensi(); }
+        else { document.querySelector('[data-tab="setting"]').classList.add('active'); document.getElementById('settingTab').classList.add('active'); }
+    };
+    function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 2500); }
+    function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m])); }
+    loadSettings(); loadGuruFromFirestore();
+    setInterval(loadGuruFromFirestore, 30000);
+</script>
+</body>
+</html>
