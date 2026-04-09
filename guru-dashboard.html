@@ -9,6 +9,11 @@
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+    <!-- html2canvas untuk konversi ke PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- jspdf untuk generate PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         body { font-family:'Inter',sans-serif; background:#f1f5f9; padding-bottom:80px; }
@@ -173,6 +178,7 @@
     let processingScan = false;  // Mencegah scan berulang
     let currentQrData = null;
     let intervalCekOtomatis = null;
+    let lastScanTime = new Map(); // Untuk mencegah double scan siswa yang sama
 
     // ==================== UTILITY ====================
     async function apiCall(action, data = {}) {
@@ -498,17 +504,10 @@
             { facingMode: "environment" },
             { fps: 10, qrbox: { width: 250, height: 250 } },
             async (decodedText) => {
-                // Hentikan scanner segera agar tidak membaca QR yang sama berulang
-                await stopScanner();
-                // Proses QR hanya jika tidak sedang diproses
-                if (!processingScan) {
-                    await processScanResult(decodedText);
-                }
+                // Proses QR tanpa menunggu (langsung kirim request)
+                processScanResultNonBlocking(decodedText);
             },
-            (errorMessage) => {
-                // Abaikan error scanning biasa
-                // console.log(errorMessage);
-            }
+            (errorMessage) => {}
         ).catch(err => {
             showToast('Gagal akses kamera: ' + err);
             scannerDiv.style.display = 'none';
@@ -517,96 +516,129 @@
         scannerActive = true;
     };
 
-    window.stopScanner = async () => {
+    window.stopScanner = () => {
         if (html5QrCode && scannerActive) {
-            try {
-                await html5QrCode.stop();
-            } catch(e) {}
+            html5QrCode.stop().then(() => {
+                scannerActive = false;
+                document.getElementById('scannerContainer').style.display = 'none';
+            }).catch(e => {
+                scannerActive = false;
+                document.getElementById('scannerContainer').style.display = 'none';
+            });
+        } else {
+            document.getElementById('scannerContainer').style.display = 'none';
             scannerActive = false;
         }
-        document.getElementById('scannerContainer').style.display = 'none';
     };
 
-    async function processScanResult(data) {
-        processingScan = true;
+    async function processScanResultNonBlocking(data) {
+        let qrData, siswa, kelas;
         try {
-            const qrData = JSON.parse(data);
-            if (!qrData.siswaId || !qrData.nis || !qrData.nama) {
-                showToast('QR Code tidak valid (bukan QR siswa)');
-                return;
-            }
-            // Ambil semua siswa guru
+            qrData = JSON.parse(data);
+        } catch(e) {
+            showToast('❌ QR Code tidak valid');
+            return;
+        }
+        if (!qrData.siswaId || !qrData.nis || !qrData.nama) {
+            showToast('❌ QR Code bukan QR siswa');
+            return;
+        }
+
+        // Cegah double scan siswa yang sama dalam 5 detik
+        const nowTime = Date.now();
+        const lastScan = lastScanTime.get(qrData.siswaId);
+        if (lastScan && (nowTime - lastScan) < 5000) {
+            showToast(`⏳ Tunggu sebentar sebelum scan ${qrData.nama} lagi`);
+            return;
+        }
+        lastScanTime.set(qrData.siswaId, nowTime);
+        
+        // Tampilkan pesan segera
+        showToast(`📱 Memproses ${qrData.nama}...`);
+        
+        try {
+            // Ambil data siswa dari server (perlu validasi)
             const siswaRes = await apiCall('getSiswa', { uidGuru: currentUser.uid });
             if (!siswaRes.success) {
-                showToast('Gagal mengambil data siswa');
+                showToast(`❌ Gagal ambil data siswa`);
                 return;
             }
-            const siswa = siswaRes.data.find(s => s.idSiswa === qrData.siswaId);
+            siswa = siswaRes.data.find(s => s.idSiswa === qrData.siswaId);
             if (!siswa) {
-                showToast('Siswa tidak ditemukan dalam daftar Anda');
-                return;
-            }
-            const today = new Date().toISOString().split('T')[0];
-            // Cek apakah sudah absen hari ini
-            const absensiRes = await apiCall('getAbsensi', { uidGuru: currentUser.uid, kelasId: siswa.kelasId, tanggal: today });
-            if (absensiRes.success && absensiRes.data.some(a => a.siswaId === siswa.idSiswa)) {
-                showToast(`${siswa.nama} sudah absen hari ini`);
-                return;
-            }
-            const kelas = kelasList.find(k => k.idKelas === siswa.kelasId);
-            if (!kelas) {
-                showToast('Kelas tidak ditemukan');
+                showToast(`❌ Siswa ${qrData.nama} tidak ditemukan`);
                 return;
             }
             
-            // ** PERBAIKAN: Konversi jamMasuk ke string HH:MM jika masih timestamp **
+            const today = new Date().toISOString().split('T')[0];
+            // Cek apakah sudah absen hari ini (optional, bisa skip untuk kecepatan)
+            const absensiRes = await apiCall('getAbsensi', { uidGuru: currentUser.uid, kelasId: siswa.kelasId, tanggal: today });
+            if (absensiRes.success && absensiRes.data.some(a => a.siswaId === siswa.idSiswa)) {
+                showToast(`⚠️ ${siswa.nama} sudah absen hari ini`);
+                return;
+            }
+            
+            kelas = kelasList.find(k => k.idKelas === siswa.kelasId);
+            if (!kelas) {
+                showToast(`❌ Kelas tidak ditemukan`);
+                return;
+            }
+            
+            // Hitung keterlambatan
             let jamMasukStr = kelas.jamMasuk;
             if (jamMasukStr && typeof jamMasukStr === 'string' && jamMasukStr.includes('T')) {
                 const date = new Date(jamMasukStr);
                 jamMasukStr = date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false });
             }
-            if (!jamMasukStr || !jamMasukStr.includes(':')) {
-                showToast('Format jam kelas tidak valid');
-                return;
-            }
-            
             const jamMasukMenit = timeToMinutes(jamMasukStr);
             const now = new Date();
             const nowMenit = now.getHours() * 60 + now.getMinutes();
             const toleransi = parseInt(kelas.toleransi) || 0;
             const selisih = nowMenit - jamMasukMenit;
-            
             let status = 'Hadir';
             let keterangan = '';
             if (selisih > toleransi) {
                 status = 'Terlambat';
                 keterangan = `Terlambat ${selisih} menit`;
             }
-            // Simpan absensi
-            const simpan = await apiCall('saveAbsensi', {
+            
+            // Kirim request simpan secara asynchronous (tidak menunggu, tapi tetap update toast setelah selesai)
+            const requestPromise = apiCall('saveAbsensi', {
                 uidGuru: currentUser.uid,
                 kelasId: siswa.kelasId,
                 siswaId: siswa.idSiswa,
                 tanggal: today,
-                jam: now.toLocaleTimeString('id-ID'),
+                jam: now.toTimeString().split(' ')[0],
                 status: status,
                 keterangan: keterangan
             });
-            if (simpan.success) {
-                showToast(`✅ ${siswa.nama} - ${status}`);
-                if (status === 'Terlambat' && siswa.telegram) {
-                    sendTelegramNotification(siswa.telegram, siswa.nama, kelas.nama, status, keterangan);
+            
+            // Jangan await, biarkan berjalan di background, tapi kita tetap ingin update toast setelah selesai
+            requestPromise.then(async (res) => {
+                if (res.success) {
+                    showToast(`✅ ${siswa.nama} - ${status}`);
+                    if (status === 'Terlambat' && siswa.telegram) {
+                        sendTelegramNotification(siswa.telegram, siswa.nama, kelas.nama, status, keterangan);
+                    }
+                    // Refresh ringkasan (optional, bisa dilakukan nanti)
+                    await loadRingkasanHariIni();
+                    updateStats();
+                } else {
+                    showToast(`❌ Gagal simpan ${siswa.nama}: ${res.message}`);
+                    // Hapus cooldown agar bisa scan ulang jika gagal
+                    lastScanTime.delete(qrData.siswaId);
                 }
-                await loadRingkasanHariIni();
-                updateStats();
-            } else {
-                showToast('Gagal simpan absensi: ' + simpan.message);
-            }
+            }).catch(err => {
+                showToast(`❌ Error simpan ${siswa.nama}`);
+                lastScanTime.delete(qrData.siswaId);
+            });
+            
+            // Tampilkan pesan optimis sementara (akan diganti oleh .then)
+            showToast(`📤 Mengirim data ${siswa.nama}...`);
+            
         } catch (err) {
             console.error(err);
-            showToast('QR Code tidak valid atau error: ' + err.message);
-        } finally {
-            processingScan = false;
+            showToast(`❌ Gagal memproses ${qrData.nama}`);
+            lastScanTime.delete(qrData.siswaId);
         }
     }
 
@@ -633,7 +665,7 @@
     // ==================== RIWAYAT ABSENSI ====================
     window.loadRiwayatAbsensi = async () => {
         const kelasId = document.getElementById('filterKelasAbsensi').value;
-        const tanggal = document.getElementById('filterTanggalAbsensi').value;
+        const tanggalFilter = document.getElementById('filterTanggalAbsensi').value;
         const res = await apiCall('getAbsensi', { uidGuru: currentUser.uid });
         if (!res.success) {
             document.getElementById('riwayatAbsensiList').innerHTML = '<div class="empty-state">Gagal memuat data</div>';
@@ -641,21 +673,45 @@
         }
         let data = res.data;
         if (kelasId) data = data.filter(a => a.kelasId === kelasId);
-        if (tanggal) data = data.filter(a => a.tanggal === tanggal);
+        if (tanggalFilter) data = data.filter(a => a.tanggal === tanggalFilter);
         data.sort((a,b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
         const container = document.getElementById('riwayatAbsensiList');
         if (!data.length) {
             container.innerHTML = '<div class="empty-state">Belum ada data absensi</div>';
             return;
         }
+        
+        // Fungsi format tanggal dari YYYY-MM-DD ke DD/MM/YYYY
+        function formatTanggal(tglStr) {
+            if (!tglStr) return '-';
+            // Jika sudah dalam format YYYY-MM-DD
+            if (tglStr.match(/^\d{4}-\d{2}-\d{2}/)) {
+                const parts = tglStr.split('-');
+                return `${parts[2]}/${parts[1]}/${parts[0]}`;
+            }
+            // Fallback
+            return tglStr;
+        }
+        
+        // Fungsi format jam dari HH:MM:SS ke HH:MM
+        function formatJam(jamStr) {
+            if (!jamStr) return '-';
+            if (jamStr.includes(':')) {
+                return jamStr.substring(0, 5);
+            }
+            return jamStr;
+        }
+        
         container.innerHTML = data.map(a => {
             const kelas = kelasList.find(k => k.idKelas === a.kelasId);
             const namaSiswa = siswaList.find(s => s.idSiswa === a.siswaId)?.nama || a.siswaId;
+            const tglDisplay = formatTanggal(a.tanggal);
+            const jamDisplay = formatJam(a.jam);
             return `
                 <div class="absensi-item">
                     <div>
                         <strong>${escapeHtml(namaSiswa)}</strong><br>
-                        <span style="font-size:11px">${kelas ? kelas.nama : '-'} | ${a.tanggal} | ${a.jam}</span><br>
+                        <span style="font-size:11px">${kelas ? kelas.nama : '-'} | ${tglDisplay} | ${jamDisplay}</span><br>
                         <span class="status-${a.status === 'Hadir' ? 'hadir' : (a.status === 'Terlambat' ? 'terlambat' : 'alpa')}">${a.status}</span>
                         ${a.keterangan ? `<span style="font-size:10px; color:#64748b"> (${a.keterangan})</span>` : ''}
                     </div>
@@ -841,7 +897,7 @@
                     kelasId: kelas.idKelas,
                     siswaId: siswa.idSiswa,
                     tanggal: today,
-                    jam: now.toLocaleTimeString('id-ID'),
+                    jam: now.toTimeString().split(' ')[0],
                     status: 'Alpa',
                     keterangan: 'Tidak hadir (otomatis)'
                 });
@@ -872,6 +928,9 @@
         localStorage.removeItem('guruData');
         window.location.href = 'index.html';
     };
+
+
+
     // Jalankan init
     init();
 </script>
