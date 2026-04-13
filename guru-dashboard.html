@@ -635,14 +635,9 @@
                 <div style="background:rgba(255,255,255,0.1); padding:8px 16px; border-radius:40px; font-size:14px; font-weight:500;">
                     <span id="scanInfoMapel">-</span>
                 </div>
-                <div style="display:flex; gap:12px;">
-                    <button id="btnFlipCamera" style="background:rgba(255,255,255,0.1); border:none; width:44px; height:44px; border-radius:40px; color:white; font-size:20px; cursor:pointer;" onclick="flipCamera()">
-                        <i class="fas fa-sync-alt"></i>
-                    </button>
-                    <button id="btnStopScan" style="background:rgba(255,255,255,0.1); border:none; width:44px; height:44px; border-radius:40px; color:white; font-size:20px; cursor:pointer;" onclick="stopScanner()">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
+                <button id="btnFlipCamera" style="background:rgba(255,255,255,0.1); border:none; width:44px; height:44px; border-radius:40px; color:white; font-size:20px; cursor:pointer;" onclick="flipCamera()">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
             </div>
 
             <!-- Area Scan -->
@@ -663,18 +658,22 @@
                 </p>
 
                 <!-- Info Hasil Scan -->
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:20px 20px 0;">
-                    <div id="scanResultDisplay" style="background:rgba(255,255,255,0.05); border-radius:20px; padding:16px 24px; width:100%; max-width:320px; text-align:center; border:1px solid rgba(255,255,255,0.1); backdrop-filter:blur(10px);">
-                        <div style="font-size:18px; font-weight:700;" id="displayNama">-</div>
-                        <div style="font-size:14px; color:#cbd5e1;" id="displayNIS">-</div>
-                        <div style="margin-top:10px;">
-                            <span id="displayStatus" style="padding:4px 16px; border-radius:40px; font-size:14px; font-weight:600;">-</span>
-                        </div>
-                        <div style="font-size:12px; color:#94a3b8; margin-top:14px;" id="scanStatusMessage">Siap memindai</div>
+                <div id="scanResultDisplay" style="background:rgba(255,255,255,0.05); border-radius:20px; padding:16px 24px; width:100%; max-width:320px; text-align:center; border:1px solid rgba(255,255,255,0.1); backdrop-filter:blur(10px);">
+                    <div style="font-size:18px; font-weight:700;" id="displayNama">-</div>
+                    <div style="font-size:14px; color:#cbd5e1;" id="displayNIS">-</div>
+                    <div style="margin-top:10px;">
+                        <span id="displayStatus" style="padding:4px 16px; border-radius:40px; font-size:14px; font-weight:600;">-</span>
                     </div>
+                    <div style="font-size:12px; color:#94a3b8; margin-top:14px;" id="scanStatusMessage">Siap memindai</div>
                 </div>
             </div>
                 
+            <!-- Footer -->
+            <div style="padding:20px 20px 120px;">
+                <button class="btn-cancel" style="background:#ef4444; color:white; padding:16px; border-radius:20px; font-size:16px; font-weight:700; border:none; width:100%; box-shadow:0 4px 12px rgba(239,68,68,0.3);" onclick="stopScanner()">
+                    <i class="fas fa-times"></i> Akhiri Scan
+                </button>
+            </div>
         </div>
         <div class="section">
             <div class="section-title"><span>📚 Mata Pelajaran</span><button class="btn-add" onclick="openMapelModal()">+</button></div>
@@ -2042,31 +2041,33 @@
             showToast('Scanner sudah aktif');
             return;
         }
-
+    
         const mapel = mapelList.find(m => m.idMapel === selectedMapelId);
         document.getElementById('scanInfoMapel').textContent = mapel ? mapel.namaMapel : 'Mapel';
-
+    
         // Reset tampilan hasil scan
         document.getElementById('displayNama').textContent = '-';
-        document.getElementById('displayNIS').textContent = 'NIS: -';
+        document.getElementById('displayNIS').textContent = '-';
         const statusEl = document.getElementById('displayStatus');
         statusEl.textContent = '-';
         statusEl.style.background = 'transparent';
         statusEl.style.color = 'white';
-
-        // ⬇️ TAMBAHKAN BARIS INI ⬇️
         setScanStatusMessage('Siap memindai');
-
+    
+        // >>> SEMBUNYIKAN BOTTOM NAVIGATION <<<
+        const bottomNav = document.querySelector('.bottom-nav');
+        if (bottomNav) bottomNav.style.display = 'none';
+    
         const scannerDiv = document.getElementById('scannerFullscreen');
         scannerDiv.style.display = 'flex';
         document.body.style.overflow = 'hidden';
-
+    
         if (!html5QrCode) {
             html5QrCode = new Html5Qrcode("qr-reader-fullscreen");
         }
-
+    
         currentFacingMode = "environment"; // selalu mulai dari kamera belakang
-
+    
         html5QrCode.start(
             { facingMode: currentFacingMode },
             { fps: 10, qrbox: { width: 280, height: 280 } },
@@ -2078,26 +2079,28 @@
             showToast('Gagal akses kamera: ' + err);
             stopScanner();
         });
-
+    
         scannerActive = true;
     };
-
+    
     window.stopScanner = () => {
+        // >>> TAMPILKAN KEMBALI BOTTOM NAVIGATION <<<
+        const bottomNav = document.querySelector('.bottom-nav');
+        if (bottomNav) bottomNav.style.display = 'flex';
+    
         document.body.style.overflow = '';
         const scannerDiv = document.getElementById('scannerFullscreen');
         scannerDiv.style.display = 'none';
-
+    
         // Reset tampilan hasil scan
         document.getElementById('displayNama').textContent = '-';
-        document.getElementById('displayNIS').textContent = 'NIS: -';
+        document.getElementById('displayNIS').textContent = '-';
         const statusEl = document.getElementById('displayStatus');
         statusEl.textContent = '-';
         statusEl.style.background = 'transparent';
         statusEl.style.color = 'white';
-
-        // ⬇️ TAMBAHKAN BARIS INI ⬇️
         setScanStatusMessage('Siap memindai');
-
+    
         if (html5QrCode && scannerActive) {
             html5QrCode.stop().then(() => {
                 scannerActive = false;
