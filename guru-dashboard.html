@@ -936,9 +936,12 @@
         <div class="section">
             <div class="section-title"><span>👨‍🎓 Daftar Siswa</span><button class="btn-add" onclick="openSiswaModal()">+</button></div>
             <div style="display:flex; gap:10px; margin-bottom:16px;">
-                <button class="btn-sm" style="background:#22c55e; color:white; flex:1; padding:10px;" onclick="showQrOptions()"><i class="fas fa-qrcode"></i> Generate QR Siswa</button>
+                <button class="btn-sm" style="background:#22c55e; color:white; flex:1; padding:10px;" onclick="showQrOptions()"><i class="fas fa-qrcode"></i> QRCode</button>
                 <button class="btn-sm" style="background:#0088cc; color:white; flex:1; padding:10px;" onclick="openBroadcastModal()">
-                    <i class="fab fa-telegram"></i> Kirim Pesan
+                    <i class="fab fa-telegram"></i> Broadcast
+                </button>
+                <button class="btn-sm" style="background:#667eea; color:white; flex:1; padding:10px;" onclick="copyFormLink()">
+                    <i class="fas fa-link"></i> Copy Link
                 </button>
             </div>
             <div class="filter-bar">
@@ -3988,6 +3991,19 @@
             messageInput.addEventListener('input', updatePreview);
         }
     });
+
+    // Copy link form orangtua
+    function copyFormLink() {
+        const baseUrl = window.location.origin + window.location.pathname.replace('guru-dashboard.html', 'form-ortu.html');
+        const uid = currentUser.uid;
+        const fullUrl = `${baseUrl}?uid=${uid}`;
+        
+        navigator.clipboard.writeText(fullUrl).then(() => {
+            showToast('✅ Link form berhasil disalin!\nKirimkan ke orangtua siswa.');
+        }).catch(() => {
+            showToast('Gagal menyalin link');
+        });
+    }
     
     init();
 </script>
