@@ -580,6 +580,241 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
+        /* Panduan Telegram */
+        .panduan-container {
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .panduan-link {
+            color: #667eea;
+            font-size: 12px;
+            cursor: pointer;
+            text-decoration: underline;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+
+        .panduan-link:hover {
+            color: #764ba2;
+        }
+
+        .panduan-gambar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-top: 12px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-panduan {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 12px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .card-panduan:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .card-panduan img {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            border-radius: 12px;
+            background: #e2e8f0;
+            margin-bottom: 10px;
+        }
+
+        .card-panduan .caption {
+            font-size: 11px;
+            color: #334155;
+            line-height: 1.4;
+            text-align: center;
+        }
+
+        .card-panduan .step-badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+        }
+
+        /* Lightbox untuk memperbesar gambar */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 9999;
+            cursor: zoom-out;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .lightbox.active {
+            display: flex;
+        }
+
+        .lightbox img {
+            max-width: 90%;
+            max-height: 80%;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            cursor: zoom-in;
+            transition: transform 0.2s;
+        }
+
+        .lightbox img.zoomed {
+            transform: scale(1.5);
+            cursor: zoom-out;
+        }
+
+        .lightbox .close-lightbox {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            background: rgba(0,0,0,0.5);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .lightbox .close-lightbox:hover {
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.1);
+        }
+
+        .lightbox .caption-lightbox {
+            color: white;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            max-width: 80%;
+            background: rgba(0,0,0,0.6);
+            padding: 8px 16px;
+            border-radius: 20px;
+        }
+
+        .lightbox .zoom-info {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255,255,255,0.7);
+            font-size: 12px;
+            background: rgba(0,0,0,0.5);
+            padding: 4px 12px;
+            border-radius: 20px;
+            pointer-events: none;
+        }
+
+        /* Pinch zoom untuk mobile */
+        .lightbox {
+            touch-action: pinch-zoom;
+        }
+
+        /* Style untuk preview QR sebelum di-download */
+        .qr-grid-preview {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            padding: 20px;
+            background: white;
+        }
+
+        .qr-card-preview {
+            border: 2px dashed #94a3b8;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            position: relative;
+            background: white;
+        }
+
+        .qr-card-preview .cut-line {
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            right: 10px;
+            height: 2px;
+            background: repeating-linear-gradient(90deg, #ef4444, #ef4444 10px, transparent 10px, transparent 20px);
+        }
+
+        .qr-card-preview::before {
+            content: "✂️";
+            position: absolute;
+            top: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 0 8px;
+            font-size: 12px;
+            color: #ef4444;
+        }
+
+        /* Modal Broadcast */
+        .broadcast-preview {
+            background: #f0fdf4;
+            border-radius: 12px;
+            padding: 12px;
+            margin: 12px 0;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .broadcast-preview p {
+            margin: 4px 0;
+        }
+
+        .broadcast-preview .count {
+            color: #16a34a;
+            font-weight: bold;
+        }
+
+        .warning-text {
+            background: #fef3c7;
+            border-left: 3px solid #f59e0b;
+            padding: 8px 12px;
+            font-size: 11px;
+            color: #92400e;
+            margin: 12px 0;
+            border-radius: 8px;
+        }
+
     </style>
 </head>
 <body class="bg-default">
@@ -702,6 +937,9 @@
             <div class="section-title"><span>👨‍🎓 Daftar Siswa</span><button class="btn-add" onclick="openSiswaModal()">+</button></div>
             <div style="display:flex; gap:10px; margin-bottom:16px;">
                 <button class="btn-sm" style="background:#22c55e; color:white; flex:1; padding:10px;" onclick="showQrOptions()"><i class="fas fa-qrcode"></i> Generate QR Siswa</button>
+                <button class="btn-sm" style="background:#0088cc; color:white; flex:1; padding:10px;" onclick="openBroadcastModal()">
+                    <i class="fab fa-telegram"></i> Kirim Pesan
+                </button>
             </div>
             <div class="filter-bar">
                 <input type="text" id="searchSiswa" placeholder="Cari nama atau NIS..." onkeyup="filterSiswa()" style="flex:2">
@@ -881,7 +1119,70 @@
 <div id="mapelModal" class="modal"><div class="modal-content"><h3 id="mapelModalTitle">Tambah Mata Pelajaran</h3><input type="hidden" id="mapelId"><div class="form-group"><label>Nama Mata Pelajaran</label><input type="text" id="mapelNama" placeholder="Contoh: Matematika"></div><div class="form-group"><label>Hari</label><select id="mapelHari" style="width:100%;padding:12px;border-radius:12px;border:1px solid #e2e8f0"><option value="">Pilih Hari</option><option value="Senin">Senin</option><option value="Selasa">Selasa</option><option value="Rabu">Rabu</option><option value="Kamis">Kamis</option><option value="Jumat">Jumat</option><option value="Sabtu">Sabtu</option><option value="Minggu">Minggu</option></select></div><div class="form-group"><label>Jam Masuk (HH:MM)</label><input type="time" id="mapelJamMasuk" value="07:00"></div><div class="form-group"><label>Jam Keluar (HH:MM)</label><input type="time" id="mapelJamKeluar" value="08:00"></div><div class="form-group"><label>Toleransi Keterlambatan (menit)</label><input type="number" id="mapelToleransi" value="15"></div><div class="modal-buttons"><button class="btn-cancel" onclick="closeMapelModal()">Batal</button><button class="btn-save" onclick="saveMapel()">Simpan</button></div></div></div>
 
 <!-- Modal Siswa -->
-<div id="siswaModal" class="modal"><div class="modal-content"><h3 id="siswaModalTitle">Tambah Siswa</h3><input type="hidden" id="siswaId"><div class="form-group"><label>NIS</label><input type="text" id="siswaNis" placeholder="Nomor Induk Siswa"></div><div class="form-group"><label>Nama Lengkap</label><input type="text" id="siswaNama" placeholder="Nama Siswa"></div><div class="form-group"><label>Chat ID Telegram (dari @userinfobot)</label><input type="text" id="siswaTelegram" placeholder="Masukkan Chat ID"><small style="font-size:10px; color:#64748b;">Cara: Buka Telegram → @userinfobot → /start → copy ID</small></div><div class="modal-buttons"><button class="btn-cancel" onclick="closeSiswaModal()">Batal</button><button class="btn-save" onclick="saveSiswa()">Simpan</button></div></div></div>
+<div id="siswaModal" class="modal">
+    <div class="modal-content">
+        <h3 id="siswaModalTitle">Tambah Siswa</h3>
+        <input type="hidden" id="siswaId">
+        <div class="form-group">
+            <label>NIS</label>
+            <input type="text" id="siswaNis" placeholder="Nomor Induk Siswa">
+        </div>
+        <div class="form-group">
+            <label>Nama Lengkap</label>
+            <input type="text" id="siswaNama" placeholder="Nama Siswa">
+        </div>
+        <div class="form-group">
+            <label>Chat ID Telegram (dari @userinfobot)</label>
+            <input type="text" id="siswaTelegram" placeholder="Masukkan Chat ID">
+            <small style="font-size:10px; color:#64748b;">
+                <i class="fas fa-info-circle"></i> ID biasanya berupa angka, contoh: 123456789
+            </small>
+        </div>
+        
+        <!-- TAMBAHKAN PANDUAN DI SINI -->
+        <div class="panduan-container">
+            <div class="panduan-link" onclick="togglePanduanTelegram()">
+                <i class="fas fa-graduation-cap"></i> Lihat Panduan Mendapatkan Chat ID Telegram
+            </div>
+            <div id="panduanTelegram" style="display: none;">
+                <div class="panduan-gambar">
+                    <!-- Gambar 1 -->
+                    <div class="card-panduan">
+                        <div class="step-badge">Langkah 1</div>
+                        <img id="imgStep1" class="panduan-img" src="a111.jpg" alt="Telegram Playstore">
+                        <div class="caption">📱 Download Aplikasi Telegram dari Playstore/App Store. Lalu daftarkan akun</div>
+                    </div>
+
+                    <!-- Gambar 2 -->
+                    <div class="card-panduan">
+                        <div class="step-badge">Langkah 2</div>
+                        <img id="imgStep2" class="panduan-img" src="a112.jpg" alt="Search Telegram">
+                        <div class="caption">🔍 Ketik di kolom pencarian: <strong>@userinfobot</strong></div>
+                    </div>
+
+                    <!-- Gambar 3 -->
+                    <div class="card-panduan">
+                        <div class="step-badge">Langkah 3</div>
+                        <img id="imgStep3" class="panduan-img" src="a113.jpg" alt="Start Bot">
+                        <div class="caption">🤖 Klik tombol <strong>/Start</strong> untuk memulai bot</div>
+                    </div>
+
+                    <!-- Gambar 4 -->
+                    <div class="card-panduan">
+                        <div class="step-badge">Langkah 4</div>
+                        <img id="imgStep4" class="panduan-img" src="a114.jpg" alt="Chat ID">
+                        <div class="caption">📋 Copy ID angka yang muncul, lalu paste ke form <strong>Chat ID Telegram</strong> di atas</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal-buttons">
+            <button class="btn-cancel" onclick="closeSiswaModal()">Batal</button>
+            <button class="btn-save" onclick="saveSiswa()">Simpan</button>
+        </div>
+    </div>
+</div>
 
 <!-- Modal QR Options -->
 <div id="qrOptionsModal" class="modal">
@@ -901,7 +1202,16 @@
 </div>
 
 <!-- Modal Preview QR -->
-<div id="qrPreviewModal" class="modal"><div class="modal-content" style="max-width:400px;text-align:center"><h3 id="previewTitle">QR Code Siswa</h3><div id="qrPreviewContainer" style="margin:20px 0;display:flex;justify-content:center"></div><div class="modal-buttons"><button class="btn-cancel" onclick="closeQrPreviewModal()">Tutup</button><button class="btn-save" id="downloadPdfBtn" onclick="downloadQrAsPdf()">Download PDF</button></div></div></div>
+<div id="qrPreviewModal" class="modal">
+    <div class="modal-content" style="max-width:600px; text-align:center">
+        <h3 id="previewTitle">QR Code Siswa</h3>
+        <div id="qrPreviewContainer" style="margin:20px 0; max-height:500px; overflow-y:auto;"></div>
+        <div class="modal-buttons">
+            <button class="btn-cancel" onclick="closeQrPreviewModal()">Tutup</button>
+            <button class="btn-save" id="downloadPdfBtn" onclick="downloadCurrentQr()">Download PDF</button>
+        </div>
+    </div>
+</div>
 
 <!-- Modal Upload Foto Profil -->
 <div id="photoUploadModal" class="modal">
@@ -981,6 +1291,43 @@
     </div>
 </div>
 
+<!-- Modal Broadcast Pesan -->
+<div id="broadcastModal" class="modal">
+    <div class="modal-content" style="max-width:450px">
+        <h3><i class="fab fa-telegram"></i> Kirim Pesan ke Orangtua Siswa</h3>
+        <div class="warning-text">
+            <i class="fas fa-info-circle"></i> Pesan akan dikirim ke semua orangtua siswa yang memiliki Chat ID Telegram.
+        </div>
+        <div class="form-group">
+            <label>Judul Pesan</label>
+            <input type="text" id="broadcastTitle" placeholder="Contoh: Pemberitahuan Orangtua/Wali" style="width:100%;padding:12px;border-radius:12px;border:1px solid #e2e8f0">
+        </div>
+        <div class="form-group">
+            <label>Isi Pesan</label>
+            <textarea id="broadcastMessage" rows="5" placeholder="Tulis pesan yang ingin disampaikan ke orangtua siswa..." style="width:100%;padding:12px;border-radius:12px;border:1px solid #e2e8f0;font-family:'Inter',sans-serif"></textarea>
+        </div>
+        <div id="broadcastPreview" class="broadcast-preview" style="display:none"></div>
+        <div class="modal-buttons">
+            <button class="btn-cancel" onclick="closeBroadcastModal()">Batal</button>
+            <button class="btn-save" onclick="sendBroadcastMessage()" id="sendBroadcastBtn">
+                <i class="fab fa-telegram"></i> Kirim Pesan
+            </button>
+        </div>
+        <div id="broadcastProgress" style="display:none; margin-top:12px; text-align:center">
+            <div class="spinner" style="width:30px;height:30px"></div>
+            <p style="font-size:12px; color:#64748b; margin-top:8px">Mengirim pesan...</p>
+        </div>
+    </div>
+</div>
+
+<!-- Lightbox untuk preview gambar -->
+<div id="lightbox" class="lightbox" onclick="closeLightbox()">
+    <div class="close-lightbox" onclick="closeLightbox()">&times;</div>
+    <img id="lightboxImg" src="" alt="Preview" onclick="toggleZoom(event)">
+    <div id="lightboxCaption" class="caption-lightbox"></div>
+    <div class="zoom-info">💡 Klik gambar untuk zoom / pinch to zoom</div>
+</div>
+
 <div id="toast" class="toast"></div>
 
 <!-- Audio Feedback -->
@@ -1044,6 +1391,7 @@
     let lastScanTime = new Map();
     let currentQrData = null;
     let intervalCekOtomatis = null;
+    let currentMultipleQrData = [];
     
     let absensiPage = 0;
     const ABSENSI_PER_PAGE = 20;
@@ -1973,6 +2321,7 @@
     window.closeMapelModal = () => document.getElementById('mapelModal').style.display = 'none';
     
     // ==================== SISWA CRUD ====================
+    const originalOpenSiswaModalForLightbox = window.openSiswaModal;
     window.openSiswaModal = (id = null) => {
         document.getElementById('siswaModalTitle').textContent = id ? 'Edit Siswa' : 'Tambah Siswa';
         document.getElementById('siswaId').value = id || '';
@@ -1988,6 +2337,20 @@
             }
         }
         document.getElementById('siswaModal').style.display = 'flex';
+        if (originalOpenSiswaModalForLightbox) originalOpenSiswaModalForLightbox(id);
+    
+        const panduanDiv = document.getElementById('panduanTelegram');
+        if (panduanDiv) {
+            panduanDiv.style.display = 'none';
+        }
+        
+        // Reset event listener untuk gambar jika sudah ada
+        setTimeout(() => {
+            const panduanImages = document.querySelectorAll('#panduanTelegram .card-panduan img');
+            panduanImages.forEach(img => {
+                img.style.cursor = 'pointer';
+            });
+        }, 100);
     };
     window.editSiswa = (id) => openSiswaModal(id);
     window.saveSiswa = async () => {
@@ -2529,26 +2892,143 @@
         const siswaId = document.getElementById('qrSiswaSelect').value;
         if (siswaId === 'all') {
             if (!siswaList.length) { showToast('Tidak ada siswa'); return; }
-            showToast('Membuat ZIP...');
-            const zip = new JSZip();
-            const folder = zip.folder('QR_Siswa');
-            for (const siswa of siswaList) {
-                // QR hanya berisi data siswa, tanpa mapel
-                const qrData = JSON.stringify({ siswaId: siswa.idSiswa, nis: siswa.nis, nama: siswa.nama });
-                const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrData)}`;
-                const response = await fetch(qrUrl);
-                const blob = await response.blob();
-                folder.file(`${siswa.nis}_${siswa.nama.replace(/[^a-zA-Z0-9]/g, '_')}.png`, blob);
-            }
-            const content = await zip.generateAsync({ type: "blob" });
-            saveAs(content, 'QR_Siswa.zip');
-            showToast('Download ZIP selesai');
+            showToast('Membuat PDF dengan 4 QR per halaman...');
+            
+            // Generate PDF dengan multiple QR
+            await generateMultipleQrPdf(siswaList);
+            closeQrOptionsModal();
         } else {
             const siswa = siswaList.find(s => s.idSiswa === siswaId);
             if (siswa) await previewQrCode(siswa);
+            closeQrOptionsModal();
         }
-        closeQrOptionsModal();
     };
+
+    // Fungsi baru untuk generate PDF multiple QR (4 per halaman)
+    async function generateMultipleQrPdf(siswaList) {
+        if (typeof window.jspdf === 'undefined') {
+            showToast('Library PDF belum siap, refresh halaman');
+            return;
+        }
+        
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({
+            orientation: 'portrait',
+            unit: 'mm',
+            format: 'a4'
+        });
+        
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const pageHeight = doc.internal.pageSize.getHeight();
+        
+        // Margin dan ukuran per card
+        const margin = 10;
+        const cardWidth = (pageWidth - (margin * 3)) / 2; // 2 kolom
+        const cardHeight = (pageHeight - (margin * 3)) / 2; // 2 baris
+        
+        // Array posisi untuk 4 card per halaman
+        const positions = [
+            { x: margin, y: margin },           // Posisi 1 (kiri atas)
+            { x: margin + cardWidth + margin, y: margin }, // Posisi 2 (kanan atas)
+            { x: margin, y: margin + cardHeight + margin }, // Posisi 3 (kiri bawah)
+            { x: margin + cardWidth + margin, y: margin + cardHeight + margin } // Posisi 4 (kanan bawah)
+        ];
+        
+        let currentPage = 0;
+        
+        for (let i = 0; i < siswaList.length; i++) {
+            const siswa = siswaList[i];
+            const position = positions[i % 4];
+            const isFirstOnPage = (i % 4 === 0);
+            
+            if (isFirstOnPage && i !== 0) {
+                doc.addPage();
+            }
+            
+            // Generate QR Code
+            const qrData = JSON.stringify({ 
+                siswaId: siswa.idSiswa, 
+                nis: siswa.nis, 
+                nama: siswa.nama 
+            });
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrData)}`;
+            
+            // Load gambar QR
+            const img = await loadImage(qrUrl);
+            
+            // Hitung ukuran QR di dalam card (80% dari card width)
+            const qrSize = Math.min(cardWidth * 0.6, cardHeight * 0.5);
+            const qrX = position.x + (cardWidth - qrSize) / 2;
+            const qrY = position.y + 15; // Jarak dari atas card
+            
+            // Gambar border card (garis putus-putus sebagai garis gunting)
+            doc.setDrawColor(239, 68, 68); // Warna merah
+            doc.setLineWidth(0.5);
+            doc.setLineDashPattern([3, 3], 0); // Garis putus-putus
+            doc.rect(position.x, position.y, cardWidth, cardHeight, 'S');
+            
+            // Reset garis solid untuk konten
+            doc.setLineDashPattern([], 0);
+            
+            // Tambahan simbol gunting di sudut
+            doc.setFontSize(10);
+            doc.setTextColor(239, 68, 68);
+            doc.text("✂️", position.x + 3, position.y + 5);
+            doc.text("✂️", position.x + cardWidth - 5, position.y + 5);
+            doc.text("✂️", position.x + 3, position.y + cardHeight - 3);
+            doc.text("✂️", position.x + cardWidth - 5, position.y + cardHeight - 3);
+            
+            // Gambar QR Code
+            doc.addImage(img, 'PNG', qrX, qrY, qrSize, qrSize);
+            
+            // Teks Nama dan NIS
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.setFont('helvetica', 'bold');
+            doc.text(siswa.nama, position.x + cardWidth / 2, qrY + qrSize + 8, { align: 'center' });
+            
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            doc.text(`NIS: ${siswa.nis}`, position.x + cardWidth / 2, qrY + qrSize + 15, { align: 'center' });
+            
+            // Tambahan teks petunjuk
+            doc.setFontSize(8);
+            doc.setTextColor(100, 100, 100);
+            doc.text("Scan QR untuk absensi", position.x + cardWidth / 2, qrY + qrSize + 22, { align: 'center' });
+            
+            // Footer card dengan nama sekolah
+            if (currentUser && currentUser.sekolah) {
+                doc.setFontSize(7);
+                doc.setTextColor(150, 150, 150);
+                doc.text(currentUser.sekolah, position.x + cardWidth / 2, position.y + cardHeight - 5, { align: 'center' });
+            }
+        }
+        
+        // Simpan PDF
+        doc.save(`QR_Siswa_${new Date().toISOString().split('T')[0]}.pdf`);
+        showToast('PDF berhasil didownload dengan 4 QR per halaman');
+    }
+
+    // Fungsi untuk mendownload sesuai jenis (single atau multiple)
+    function downloadCurrentQr() {
+        if (currentMultipleQrData && currentMultipleQrData.length > 0) {
+            generateMultipleQrPdf(currentMultipleQrData);
+            closeQrPreviewModal();
+        } else if (currentQrData) {
+            downloadQrAsPdf();
+        }
+    }
+
+    // Fungsi helper untuk load image async
+    function loadImage(url) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.crossOrigin = "Anonymous";
+            img.onload = () => resolve(img);
+            img.onerror = reject;
+            img.src = url;
+        });
+    }
     
     async function previewQrCode(siswa) {
         // QR hanya berisi data siswa, tanpa mapel
@@ -2566,43 +3046,128 @@
         `;
         document.getElementById('qrPreviewModal').style.display = 'flex';
     }
-    
+
+    // Fungsi untuk preview grid 4 QR sebelum download
+    async function previewMultipleQr(siswaList) {
+        const previewContainer = document.getElementById('qrPreviewContainer');
+        if (!previewContainer) return;
+        
+        let html = '<div class="qr-grid-preview">';
+        
+        for (let i = 0; i < Math.min(4, siswaList.length); i++) {
+            const siswa = siswaList[i];
+            const qrData = JSON.stringify({ 
+                siswaId: siswa.idSiswa, 
+                nis: siswa.nis, 
+                nama: siswa.nama 
+            });
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrData)}`;
+            
+            html += `
+                <div class="qr-card-preview">
+                    <div class="cut-line"></div>
+                    <img src="${qrUrl}" alt="QR ${siswa.nama}" style="width:120px; height:120px; margin:10px auto; display:block;">
+                    <h4 style="font-size:12px; margin:8px 0 4px;">${escapeHtml(siswa.nama)}</h4>
+                    <p style="font-size:10px; color:#64748b;">NIS: ${siswa.nis}</p>
+                    <p style="font-size:9px; color:#22c55e; margin-top:8px;">✂️ Gunting sesuai garis</p>
+                </div>
+            `;
+        }
+        
+        html += '</div>';
+        previewContainer.innerHTML = html;
+        document.getElementById('previewTitle').innerHTML = 'Preview QR Siswa (4 per halaman)';
+        document.getElementById('qrPreviewModal').style.display = 'flex';
+        
+        // Simpan data untuk download
+        currentMultipleQrData = siswaList;
+    }
+   
     window.closeQrPreviewModal = () => document.getElementById('qrPreviewModal').style.display = 'none';
     
+    // Download PDF untuk 1 siswa (ukuran 1/4 dari halaman A4)
     window.downloadQrAsPdf = async () => {
         if (!currentQrData) return;
         const { siswa, qrUrl } = currentQrData;
+        
         if (typeof window.jspdf === 'undefined') {
             showToast('Library PDF belum siap, refresh halaman');
             return;
         }
+        
         const { jsPDF } = window.jspdf;
-        const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-        const img = new Image();
-        img.crossOrigin = "Anonymous";
-        img.src = qrUrl;
-        img.onload = () => {
-            const canvas = document.createElement('canvas');
-            canvas.width = img.width;
-            canvas.height = img.height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0);
-            const imgData = canvas.toDataURL('image/png');
-            doc.setFontSize(18);
-            doc.text('QR Code Absensi', 105, 30, { align: 'center' });
-            doc.setFontSize(12);
-            doc.text(`Nama: ${siswa.nama}`, 105, 50, { align: 'center' });
-            doc.text(`NIS: ${siswa.nis}`, 105, 60, { align: 'center' });
-            doc.addImage(imgData, 'PNG', 55, 80, 100, 100);
-            doc.setFontSize(10);
-            doc.text('Scan QR Code untuk melakukan absensi', 105, 200, { align: 'center' });
-            doc.text('Pilih mata pelajaran sebelum scan', 105, 210, { align: 'center' });
-            doc.text('GoAbs - Sistem Absensi Digital', 105, 220, { align: 'center' });
-            doc.save(`QR_${siswa.nis}_${siswa.nama}.pdf`);
-            showToast('PDF berhasil didownload');
-            closeQrPreviewModal();
-        };
-        img.onerror = () => showToast('Gagal memuat QR Code');
+        
+        // Ukuran 1/4 dari A4 (setengah dari lebar dan tinggi A4)
+        // A4 = 210mm x 297mm
+        // 1/4 A4 = 105mm x 148.5mm (setengahnya)
+        const cardWidth = 105;  // mm
+        const cardHeight = 148.5; // mm
+        
+        const doc = new jsPDF({
+            orientation: 'portrait',
+            unit: 'mm',
+            format: [cardWidth, cardHeight]
+        });
+        
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const pageHeight = doc.internal.pageSize.getHeight();
+        
+        // Border dengan garis gunting (sama seperti di multiple QR)
+        doc.setDrawColor(239, 68, 68); // Warna merah
+        doc.setLineWidth(0.5);
+        doc.setLineDashPattern([3, 3], 0); // Garis putus-putus
+        doc.rect(2, 2, pageWidth - 4, pageHeight - 4, 'S');
+        
+        // Simbol gunting di keempat sudut
+        doc.setLineDashPattern([], 0);
+        doc.setFontSize(8);
+        doc.setTextColor(239, 68, 68);
+        doc.text("✂️", 5, 7);
+        doc.text("✂️", pageWidth - 7, 7);
+        doc.text("✂️", 5, pageHeight - 5);
+        doc.text("✂️", pageWidth - 7, pageHeight - 5);
+        
+        // Load QR image
+        const img = await loadImage(qrUrl);
+        
+        // Ukuran QR (proporsional dengan card)
+        const qrSize = 50; // mm
+        const qrX = (pageWidth - qrSize) / 2;
+        const qrY = 20; // Jarak dari atas
+        
+        doc.addImage(img, 'PNG', qrX, qrY, qrSize, qrSize);
+        
+        // Teks Nama
+        doc.setFontSize(12);
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('helvetica', 'bold');
+        doc.text(siswa.nama, pageWidth / 2, qrY + qrSize + 8, { align: 'center' });
+        
+        // Teks NIS
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        doc.text(`NIS: ${siswa.nis}`, pageWidth / 2, qrY + qrSize + 16, { align: 'center' });
+        
+        // Teks petunjuk
+        doc.setFontSize(8);
+        doc.setTextColor(100, 100, 100);
+        doc.text("Scan QR untuk absensi", pageWidth / 2, qrY + qrSize + 24, { align: 'center' });
+        
+        // Footer dengan nama sekolah
+        if (currentUser && currentUser.sekolah) {
+            doc.setFontSize(7);
+            doc.setTextColor(150, 150, 150);
+            let sekolahText = currentUser.sekolah;
+            if (sekolahText.length > 25) {
+                sekolahText = sekolahText.substring(0, 22) + '...';
+            }
+            doc.text(sekolahText, pageWidth / 2, pageHeight - 6, { align: 'center' });
+        }
+        
+        // Nama file
+        doc.save(`QR_${siswa.nis}_${siswa.nama}.pdf`);
+        showToast('PDF berhasil didownload');
+        closeQrPreviewModal();
     };
     
     window.generateSingleQr = async (siswaId) => {
@@ -3006,6 +3571,423 @@
         }
         doc.autoTable({ head: [headers], body: body, startY: 52, styles: { fontSize: 6 } });
     }
+
+    // Toggle panduan Telegram
+    function togglePanduanTelegram() {
+        const panduanDiv = document.getElementById('panduanTelegram');
+        if (panduanDiv.style.display === 'none' || panduanDiv.style.display === '') {
+            panduanDiv.style.display = 'block';
+            // Tambahkan event listener ke gambar setelah panduan ditampilkan
+            addClickEventToPanduanImages();
+        } else {
+            panduanDiv.style.display = 'none';
+        }
+    }
+
+    // Fungsi untuk menambahkan event klik ke semua gambar panduan
+    function addClickEventToPanduanImages() {
+        const panduanImages = document.querySelectorAll('#panduanTelegram .card-panduan img');
+        panduanImages.forEach((img, index) => {
+            // Hapus event listener lama jika ada
+            img.removeEventListener('click', handleImageClick);
+            // Tambahkan event listener baru
+            img.addEventListener('click', handleImageClick);
+            // Tambahkan cursor pointer
+            img.style.cursor = 'pointer';
+            // Tambahkan efek hover
+            img.style.transition = 'transform 0.2s';
+            img.addEventListener('mouseenter', () => {
+                img.style.transform = 'scale(1.02)';
+            });
+            img.addEventListener('mouseleave', () => {
+                img.style.transform = 'scale(1)';
+            });
+        });
+    }
+
+    // Handler untuk klik gambar
+    function handleImageClick(event) {
+        event.stopPropagation();
+        const img = event.target;
+        const parentCard = img.closest('.card-panduan');
+        const caption = parentCard.querySelector('.caption')?.innerText || 'Panduan Telegram';
+        const imageSrc = img.src;
+        
+        // Buka lightbox dengan gambar yang diklik
+        openLightbox(imageSrc, caption);
+    }
+
+    // Fungsi untuk load gambar asli (opsional - jika ingin menggunakan gambar real dari internet)
+    function loadRealTelegramImages() {
+        // Jika ingin menggunakan gambar real, ganti URL berikut dengan URL gambar asli Anda
+        // Contoh menggunakan placeholder yang lebih baik
+        
+        const imageUrls = {
+            step1: 'https://placehold.co/400x400/667eea/white?text=Telegram&font=montserrat',
+            step2: 'https://placehold.co/400x400/764ba2/white?text=@userinfobot&font=montserrat',
+            step3: 'https://placehold.co/400x400/22c55e/white?text=/Start&font=montserrat',
+            step4: 'https://placehold.co/400x400/f59e0b/white?text=ID:+123456789&font=montserrat'
+        };
+        
+        const imgElements = {
+            step1: document.getElementById('imgStep1'),
+            step2: document.getElementById('imgStep2'),
+            step3: document.getElementById('imgStep3'),
+            step4: document.getElementById('imgStep4')
+        };
+        
+        // Set gambar real
+        if (imgElements.step1) imgElements.step1.src = imageUrls.step1;
+        if (imgElements.step2) imgElements.step2.src = imageUrls.step2;
+        if (imgElements.step3) imgElements.step3.src = imageUrls.step3;
+        if (imgElements.step4) imgElements.step4.src = imageUrls.step4;
+        
+        // Tambahkan event listener setelah gambar di-load
+        setTimeout(() => {
+            addClickEventToPanduanImages();
+        }, 100);
+    }
+
+    // Optional: Tutup panduan saat modal ditutup
+    function closeSiswaModal() {
+        document.getElementById('siswaModal').style.display = 'none';
+        // Sembunyikan panduan saat modal ditutup
+        const panduanDiv = document.getElementById('panduanTelegram');
+        if (panduanDiv) {
+            panduanDiv.style.display = 'none';
+        }
+    }
+
+    // Override openSiswaModal untuk reset panduan
+    const originalOpenSiswaModal = window.openSiswaModal;
+    window.openSiswaModal = (id = null) => {
+        // Panggil fungsi asli
+        if (originalOpenSiswaModal) originalOpenSiswaModal(id);
+        
+        // Reset panduan ke tersembunyi
+        const panduanDiv = document.getElementById('panduanTelegram');
+        if (panduanDiv) {
+            panduanDiv.style.display = 'none';
+        }
+    };
+
+    // ==================== LIGHTBOX FUNGSI ====================
+    let isZoomed = false;
+
+    function openLightbox(imageSrc, caption) {
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightboxImg');
+        const lightboxCaption = document.getElementById('lightboxCaption');
+        
+        lightboxImg.src = imageSrc;
+        lightboxImg.classList.remove('zoomed');
+        lightboxCaption.textContent = caption;
+        lightbox.classList.add('active');
+        isZoomed = false;
+        
+        // Disable scroll body
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+        const lightbox = document.getElementById('lightbox');
+        lightbox.classList.remove('active');
+        document.body.style.overflow = '';
+        isZoomed = false;
+    }
+
+    function toggleZoom(event) {
+        event.stopPropagation();
+        const img = document.getElementById('lightboxImg');
+        
+        if (isZoomed) {
+            img.classList.remove('zoomed');
+            isZoomed = false;
+        } else {
+            img.classList.add('zoomed');
+            isZoomed = true;
+        }
+    }
+
+    // Pinch zoom untuk mobile (opsional, menggunakan library atau manual)
+    let initialDistance = 0;
+    let initialScale = 1;
+
+    document.getElementById('lightboxImg').addEventListener('touchstart', (e) => {
+        if (e.touches.length === 2) {
+            e.preventDefault();
+            const touch1 = e.touches[0];
+            const touch2 = e.touches[1];
+            initialDistance = Math.hypot(
+                touch1.clientX - touch2.clientX,
+                touch1.clientY - touch2.clientY
+            );
+            initialScale = isZoomed ? 1.5 : 1;
+        }
+    });
+
+    document.getElementById('lightboxImg').addEventListener('touchmove', (e) => {
+        if (e.touches.length === 2) {
+            e.preventDefault();
+            const touch1 = e.touches[0];
+            const touch2 = e.touches[1];
+            const currentDistance = Math.hypot(
+                touch1.clientX - touch2.clientX,
+                touch1.clientY - touch2.clientY
+            );
+            
+            if (initialDistance > 0) {
+                const scale = (currentDistance / initialDistance) * initialScale;
+                if (scale > 1) {
+                    document.getElementById('lightboxImg').style.transform = `scale(${scale})`;
+                } else {
+                    document.getElementById('lightboxImg').style.transform = '';
+                }
+            }
+        }
+    });
+
+    document.getElementById('lightboxImg').addEventListener('touchend', (e) => {
+        initialDistance = 0;
+        const img = document.getElementById('lightboxImg');
+        if (img.style.transform) {
+            img.classList.add('zoomed');
+            img.style.transform = '';
+            isZoomed = true;
+        }
+    });
+
+    // Tutup lightbox dengan tombol ESC
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeLightbox();
+        }
+    });
+
+    function initLightbox() {
+        // Pastikan lightbox sudah siap
+        console.log('Lightbox siap digunakan');
+    }
+
+    // ==================== BROADCAST PESAN TELEGRAM ====================
+    let siswaWithTelegram = [];
+
+    function openBroadcastModal() {
+        // Filter siswa yang memiliki Chat ID Telegram (pastikan telegram adalah string dan tidak kosong)
+        siswaWithTelegram = siswaList.filter(s => {
+            // Pastikan telegram ada dan bukan null/undefined
+            if (!s.telegram) return false;
+            // Konversi ke string dan trim
+            const telegramStr = String(s.telegram).trim();
+            return telegramStr !== '' && telegramStr !== 'null' && telegramStr !== 'undefined';
+        });
+        
+        if (siswaWithTelegram.length === 0) {
+            showToast('⚠️ Tidak ada siswa yang memiliki Chat ID Telegram. Tambahkan Chat ID terlebih dahulu.');
+            return;
+        }
+        
+        // Reset form
+        document.getElementById('broadcastTitle').value = '';
+        document.getElementById('broadcastMessage').value = '';
+        document.getElementById('broadcastPreview').style.display = 'none';
+        document.getElementById('broadcastProgress').style.display = 'none';
+        
+        // Tampilkan preview jumlah penerima
+        const previewDiv = document.getElementById('broadcastPreview');
+        previewDiv.innerHTML = `
+            <p><i class="fas fa-users"></i> <strong class="count">${siswaWithTelegram.length}</strong> orangtua siswa akan menerima pesan ini:</p>
+            <div style="margin-top:8px; max-height:100px; overflow-y:auto">
+                ${siswaWithTelegram.slice(0,5).map(s => `<p>📱 ${escapeHtml(s.nama)} (${s.nis})</p>`).join('')}
+                ${siswaWithTelegram.length > 5 ? `<p><small>...dan ${siswaWithTelegram.length - 5} lainnya</small></p>` : ''}
+            </div>
+        `;
+        previewDiv.style.display = 'block';
+        
+        document.getElementById('broadcastModal').style.display = 'flex';
+    }
+
+    function closeBroadcastModal() {
+        document.getElementById('broadcastModal').style.display = 'none';
+    }
+
+    async function sendBroadcastMessage() {
+        const title = document.getElementById('broadcastTitle').value.trim();
+        const message = document.getElementById('broadcastMessage').value.trim();
+        
+        if (!title && !message) {
+            showToast('Judul atau isi pesan harus diisi');
+            return;
+        }
+        
+        if (siswaWithTelegram.length === 0) {
+            showToast('Tidak ada penerima pesan');
+            return;
+        }
+        
+        // Tampilkan konfirmasi dengan cara sederhana dulu untuk testing
+        const confirmSend = confirm(`Kirim pesan ke ${siswaWithTelegram.length} orangtua siswa?\n\nJudul: ${title || '(tanpa judul)'}\nPesan: ${message.substring(0, 50)}${message.length > 50 ? '...' : ''}`);
+        
+        if (!confirmSend) {
+            return;
+        }
+        
+        const sendBtn = document.getElementById('sendBroadcastBtn');
+        const progressDiv = document.getElementById('broadcastProgress');
+        const originalText = sendBtn.innerHTML;
+        
+        sendBtn.disabled = true;
+        sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+        progressDiv.style.display = 'block';
+        progressDiv.innerHTML = `
+            <div class="spinner" style="width:30px;height:30px"></div>
+            <p style="font-size:12px; color:#64748b; margin-top:8px">Memulai pengiriman...</p>
+        `;
+        
+        let successCount = 0;
+        let failCount = 0;
+        let failedList = [];
+        
+        // Format pesan lengkap
+        const fullMessage = title ? `📢 *${title}*\n\n${message}` : message;
+        
+        // Kirim ke setiap orangtua
+        for (let i = 0; i < siswaWithTelegram.length; i++) {
+            const siswa = siswaWithTelegram[i];
+            // Pastikan chatId dalam bentuk string dan bersih
+            let chatId = String(siswa.telegram).trim();
+            
+            // Skip jika chatId tidak valid
+            if (!chatId || chatId === '' || chatId === 'null' || chatId === 'undefined') {
+                failCount++;
+                failedList.push(`${siswa.nama} (${siswa.nis}) - ID tidak valid`);
+                continue;
+            }
+            
+            try {
+                const result = await sendTelegramMessageDirect(chatId, fullMessage);
+                if (result.success) {
+                    successCount++;
+                } else {
+                    failCount++;
+                    failedList.push(`${siswa.nama} (${siswa.nis})`);
+                    console.error(`Gagal kirim ke ${siswa.nama}:`, result.error);
+                }
+            } catch (error) {
+                failCount++;
+                failedList.push(`${siswa.nama} (${siswa.nis})`);
+                console.error(`Error kirim ke ${siswa.nama}:`, error);
+            }
+            
+            // Update progress setiap pengiriman
+            progressDiv.innerHTML = `
+                <div class="spinner" style="width:30px;height:30px"></div>
+                <p style="font-size:12px; color:#64748b; margin-top:8px">
+                    Mengirim... ${i + 1}/${siswaWithTelegram.length}
+                    <br>✅ Berhasil: ${successCount} | ❌ Gagal: ${failCount}
+                </p>
+            `;
+            
+            // Delay kecil untuk menghindari rate limit (200ms)
+            await new Promise(resolve => setTimeout(resolve, 200));
+        }
+        
+        // Tampilkan hasil
+        progressDiv.innerHTML = `
+            <div style="text-align:center">
+                <i class="fas fa-check-circle" style="color:#16a34a; font-size:32px; margin-bottom:8px"></i>
+                <p style="font-weight:bold">Pengiriman Selesai!</p>
+                <p style="font-size:12px">✅ Berhasil: ${successCount} orangtua</p>
+                <p style="font-size:12px">❌ Gagal: ${failCount} orangtua</p>
+                ${failCount > 0 ? `<p style="font-size:10px; color:#ef4444; margin-top:8px">Gagal dikirim ke: ${failedList.slice(0,3).join(', ')}${failedList.length > 3 ? ` dan ${failedList.length-3} lainnya` : ''}</p>` : ''}
+            </div>
+        `;
+        
+        // Reset tombol setelah 3 detik
+        setTimeout(() => {
+            sendBtn.disabled = false;
+            sendBtn.innerHTML = originalText;
+            
+            if (successCount > 0) {
+                showToast(`✅ Pesan terkirim ke ${successCount} orangtua`);
+            }
+            if (failCount > 0) {
+                showToast(`⚠️ Gagal kirim ke ${failCount} orangtua`);
+            }
+            
+            // Tutup modal setelah 2 detik
+            setTimeout(() => {
+                if (successCount > 0 || failCount > 0) {
+                    closeBroadcastModal();
+                }
+            }, 2000);
+        }, 3000);
+    }
+
+    // Fungsi untuk mengirim pesan Telegram langsung
+    async function sendTelegramMessageDirect(chatId, message) {
+        const BOT_TOKEN = "8723214264:AAEIqOPa580lu6AzuAQLL-pecG_4hUTBc4o";
+        
+        const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+        
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    chat_id: String(chatId), // Pastikan string
+                    text: message,
+                    parse_mode: 'Markdown'
+                })
+            });
+            
+            const result = await response.json();
+            
+            if (result.ok) {
+                return { success: true };
+            } else {
+                console.error('Telegram API Error:', result);
+                return { success: false, error: result.description || 'Unknown error' };
+            }
+        } catch (error) {
+            console.error('Network Error:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    // Preview pesan saat mengetik (opsional)
+    document.addEventListener('DOMContentLoaded', () => {
+        const titleInput = document.getElementById('broadcastTitle');
+        const messageInput = document.getElementById('broadcastMessage');
+        
+        if (titleInput && messageInput) {
+            const updatePreview = () => {
+                const title = titleInput.value.trim();
+                const message = messageInput.value.trim();
+                const previewDiv = document.getElementById('broadcastPreview');
+                
+                if ((title || message) && siswaWithTelegram.length > 0) {
+                    const fullMessage = title ? `📢 *${title}*\n\n${message}` : message;
+                    previewDiv.innerHTML = `
+                        <p><i class="fas fa-users"></i> <strong class="count">${siswaWithTelegram.length}</strong> orangtua siswa akan menerima:</p>
+                        <div style="background:#f1f5f9; padding:10px; border-radius:8px; margin-top:8px; font-size:11px;">
+                            ${fullMessage.replace(/\n/g, '<br>')}
+                        </div>
+                        <div style="margin-top:8px; max-height:80px; overflow-y:auto">
+                            ${siswaWithTelegram.slice(0,3).map(s => `<p>📱 ${escapeHtml(s.nama)}</p>`).join('')}
+                            ${siswaWithTelegram.length > 3 ? `<p><small>...dan ${siswaWithTelegram.length - 3} lainnya</small></p>` : ''}
+                        </div>
+                    `;
+                    previewDiv.style.display = 'block';
+                }
+            };
+            
+            titleInput.addEventListener('input', updatePreview);
+            messageInput.addEventListener('input', updatePreview);
+        }
+    });
     
     init();
 </script>
