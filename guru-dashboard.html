@@ -82,11 +82,63 @@
         .section-title { font-size:18px; font-weight:700; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; }
         .btn-add { background:#667eea; color:white; border:none; width:36px; height:36px; border-radius:12px; font-size:18px; cursor:pointer; }
         .btn-sm { padding:8px 14px; border:none; border-radius:12px; font-size:12px; font-weight:600; cursor:pointer; transition: all 0.3s ease; }
-        
-        .card-item { background:#f8fafc; border-radius:16px; padding:14px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; }
+
+        .card-item.dragging {
+            opacity: 0.5;
+            background: #e2e8f0;
+            cursor: grabbing;
+        }
+        .card-item { background:#f8fafc; border-radius:16px; padding:14px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; cursor: grab; transition: all 0.2s ease; }
         .card-info h4 { font-size:15px; font-weight:700; margin-bottom:4px; }
         .card-info p { font-size:12px; color:#64748b; }
         .card-actions { display:flex; gap:8px; }
+        .card-item:active {
+            cursor: grabbing;
+        }
+
+        /* Mapel Hidden */
+        .card-item.hidden-mapel {
+            opacity: 0.6;
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .hidden-badge {
+            background: #f59e0b;
+            color: white;
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 8px;
+            display: inline-block;
+        }
+
+        .btn-hidden {
+            color: #f59e0b;
+        }
+
+        .btn-hidden.active {
+            color: #22c55e;
+        }
+
+        .drag-over {
+            border: 2px dashed #667eea;
+            background: #f0f4ff;
+            transform: scale(1.01);
+        }
+
+        .drag-handle {
+            cursor: grab;
+            margin-right: 12px;
+            color: #94a3b8;
+            font-size: 16px;
+        }
+
+        .drag-handle:active {
+            cursor: grabbing;
+        }
+
+
         .btn-icon { background:transparent; border:none; padding:8px; border-radius:10px; cursor:pointer; font-size:14px; }
         .btn-edit { color:#667eea; }
         .btn-delete { color:#ef4444; }
@@ -815,6 +867,139 @@
             border-radius: 8px;
         }
 
+        /* Style untuk button disabled */
+        .btn-save:disabled, .btn-add:disabled, .btn-sm:disabled, .btn-delete:disabled, .btn-edit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-icon:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Info hari ini di scanner */
+        .hari-ini-badge {
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        /* Tombol Profil di Header */
+        .profile-nav-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile-nav-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.05);
+        }
+
+        .profile-nav-btn i {
+            font-size: 18px;
+        }
+
+        /* Badge Libur Aktif */
+        .libur-active-badge {
+            background: #ef4444;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .libur-active-badge i {
+            font-size: 16px;
+        }
+
+        .libur-badge {
+            background: #f59e0b;
+            color: white;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin-left: 8px;
+        }
+
+        /* Pagination styles */
+        .pagination-info {
+            background: #f1f5f9;
+            padding: 10px 12px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            font-size: 12px;
+            color: #475569;
+            text-align: center;
+        }
+
+        .load-more-btn {
+            transition: all 0.3s ease;
+        }
+
+        .load-more-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102,126,234,0.3);
+        }
+
+        .load-more-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Style untuk filter arsip */
+        .filter-arsip-group {
+            display: flex;
+            gap: 8px;
+            flex: 1;
+        }
+
+        #filterPeriode, #filterBulan {
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 13px;
+            font-family: 'Inter', sans-serif;
+            background: white;
+        }
+
+        #filterBulan {
+            display: none;
+        }
+
+        .arsip-badge {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .arsip-badge i {
+            font-size: 14px;
+        }
+
     </style>
 </head>
 <body class="bg-default">
@@ -826,7 +1011,12 @@
                     <button class="header-minimize-btn" id="headerMinimizeBtn" onclick="toggleHeader()">
                         <i class="fas fa-chevron-up"></i>
                     </button>
-                    <button class="logout-btn" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i></button>
+                    <button class="profile-nav-btn" id="headerProfileBtn" onclick="switchPage('profile')" title="Profil">
+                        <i class="fas fa-user-circle"></i>
+                    </button>
+                    <button class="logout-btn" onclick="handleLogout()" title="Logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
                 </div>
             </div>
             <div class="greeting" style="display: flex; justify-content: space-between; align-items: center;">
@@ -861,7 +1051,10 @@
             <div id="ringkasanHariIni"><div class="spinner"></div></div>
         </div>
         <div class="section">
-            <div class="section-title"><span>📱 Scan QR Code Absensi</span></div>
+            <div class="section-title">
+                <span>📱 Scan QR Code Absensi</span>
+                <span class="hari-ini-badge" id="hariIniBadge"></span>
+            </div>
             <div id="scanMapelSelect" style="margin-bottom:12px">
                 <select id="selectedMapelScan" style="width:100%;padding:12px;border-radius:12px;border:1px solid #e2e8f0">
                     <option value="">Pilih Mata Pelajaran</option>
@@ -961,11 +1154,37 @@
                 </div>
             </div>
             <div class="filter-bar">
-                <select id="filterMapelAbsensi" onchange="loadRiwayatAbsensi()" style="flex:2;"><option value="">Semua Mapel</option></select>
-                <input type="date" id="filterTanggalAbsensi" onchange="loadRiwayatAbsensi()" style="flex:1;">
-                <button class="btn-sm" style="background:#ef4444; color:white; padding:10px 16px;" onclick="hapusRiwayatBerdasarkanFilter()"><i class="fas fa-filter"></i> Hapus</button>
+                <select id="filterMapelAbsensi" onchange="resetRiwayatPageAndLoad()" style="flex:2;">
+                    <option value="">Semua Mapel</option>
+                </select>
+                <input type="date" id="filterTanggalAbsensi" onchange="resetRiwayatPageAndLoad()" style="flex:1;">
+                <div class="filter-arsip-group">
+                    <select id="filterPeriode" onchange="onPeriodeChange()" style="flex:1;">
+                        <option value="aktif">📅 30 Hari Terakhir</option>
+                        <option value="arsip">📦 Data Arsip</option>
+                    </select>
+                    <select id="filterBulan" onchange="loadRiwayatAbsensi()" style="flex:1;">
+                        <option value="">Pilih Bulan</option>
+                    </select>
+                </div>
+                <button class="btn-sm" style="background:#ef4444; color:white; padding:10px 16px;" onclick="hapusRiwayatBerdasarkanFilter()">
+                    <i class="fas fa-trash"></i> Hapus
+                </button>
             </div>
             <div id="riwayatAbsensiList"><div class="spinner"></div></div>
+        </div>
+    </div>
+
+    <div id="pageLibur" class="page">
+        <div class="section">
+            <div class="section-title">
+                <span>📅 Kelola Hari Libur</span>
+                <button class="btn-add" onclick="openTambahLiburModal()">+</button>
+            </div>
+            <p style="font-size:13px; color:#64748b; margin-bottom:16px;">
+                <i class="fas fa-info-circle"></i> Tambahkan tanggal libur agar sistem tidak melakukan absensi otomatis dan menonaktifkan scanner.
+            </p>
+            <div id="liburList"><div class="spinner"></div></div>
         </div>
     </div>
 
@@ -1103,7 +1322,7 @@
     <div class="nav-item" data-page="mapel"><i class="fas fa-book"></i><span>Mapel</span></div>
     <div class="nav-item" data-page="siswa"><i class="fas fa-users"></i><span>Siswa</span></div>
     <div class="nav-item" data-page="absensi"><i class="fas fa-calendar-check"></i><span>Absensi</span></div>
-    <div class="nav-item" data-page="profile"><i class="fas fa-user"></i><span>Profil</span></div>
+    <div class="nav-item" data-page="libur"><i class="fas fa-calendar-times"></i><span>Libur</span></div>
 </div>
 
 <!-- Modal Konfirmasi Kustom -->
@@ -1271,6 +1490,26 @@
     </div>
 </div>
 
+<!-- Modal Tambah/Edit Libur -->
+<div id="liburModal" class="modal">
+    <div class="modal-content" style="max-width:350px">
+        <h3 id="liburModalTitle">Tambah Hari Libur</h3>
+        <input type="hidden" id="liburId">
+        <div class="form-group">
+            <label>Tanggal Libur</label>
+            <input type="date" id="liburTanggal">
+        </div>
+        <div class="form-group">
+            <label>Keterangan</label>
+            <input type="text" id="liburKeterangan" placeholder="Contoh: Libur Nasional, Libur Sekolah, dll">
+        </div>
+        <div class="modal-buttons">
+            <button class="btn-cancel" onclick="closeLiburModal()">Batal</button>
+            <button class="btn-save" onclick="saveLibur()">Simpan</button>
+        </div>
+    </div>
+</div>
+
 <!-- Modal Cetak Laporan -->
 <div id="cetakModal" class="modal">
     <div class="modal-content" style="max-width:450px">
@@ -1397,7 +1636,7 @@
     let currentMultipleQrData = [];
     
     let absensiPage = 0;
-    const ABSENSI_PER_PAGE = 20;
+    const ABSENSI_PER_PAGE = 10;
     let currentAbsensiFilter = { mapelId: '', tanggal: '' };
 
     // ==================== UTILITY ====================
@@ -1425,6 +1664,37 @@
     function escapeHtml(str) {
         if (!str) return '';
         return str.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m]));
+    }
+
+    // ==================== SPINNER UTILITY ====================
+    function showButtonSpinner(button, text = 'Menyimpan...') {
+        if (!button) return;
+        button.disabled = true;
+        button.dataset.originalText = button.innerHTML;
+        button.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${text}`;
+    }
+
+    function hideButtonSpinner(button) {
+        if (!button) return;
+        button.disabled = false;
+        if (button.dataset.originalText) {
+            button.innerHTML = button.dataset.originalText;
+        }
+    }
+
+    function showElementSpinner(element) {
+        if (!element) return;
+        element.disabled = true;
+        element.dataset.originalHtml = element.innerHTML;
+        element.innerHTML = '<div class="spinner" style="width:30px;height:30px;margin:10px auto"></div>';
+    }
+
+    function hideElementSpinner(element, originalHtml) {
+        if (!element) return;
+        element.disabled = false;
+        if (element.dataset.originalHtml) {
+            element.innerHTML = element.dataset.originalHtml;
+        }
     }
 
     // ==================== INIT ====================
@@ -1504,6 +1774,7 @@
         loadHeaderMinimizeStatus();
 
         await loadDataParallel();
+        await cekHariLibur(); // Tambahkan baris ini
 
         // Setup navigasi
         document.querySelectorAll('.nav-item').forEach(item => {
@@ -1551,19 +1822,27 @@
     };
     
     window.ubahPassword = async () => {
+        const saveBtn = event?.target;
+        if (saveBtn?.disabled) return;
+        if (saveBtn) showButtonSpinner(saveBtn, 'Memproses...');
+        
         const oldPassword = document.getElementById('oldPassword').value;
         const newPassword = document.getElementById('newPassword').value;
         const confirmPassword = document.getElementById('confirmPassword').value;
+        
         if (!oldPassword || !newPassword || !confirmPassword) {
             showToast('Semua field harus diisi');
+            if (saveBtn) hideButtonSpinner(saveBtn);
             return;
         }
         if (newPassword.length < 6) {
             showToast('Password baru minimal 6 karakter');
+            if (saveBtn) hideButtonSpinner(saveBtn);
             return;
         }
         if (newPassword !== confirmPassword) {
             showToast('Konfirmasi password tidak cocok');
+            if (saveBtn) hideButtonSpinner(saveBtn);
             return;
         }
         const res = await apiCall('updatePassword', {
@@ -1579,6 +1858,7 @@
         } else {
             showToast('Gagal: ' + res.message);
         }
+        if (saveBtn) hideButtonSpinner(saveBtn);
     };
     
     window.changeBackground = async (bgType, save = true) => {
@@ -2062,6 +2342,10 @@
         const res = await apiCall('getMapel', { uidGuru: currentUser.uid });
         if (res.success) {
             mapelList = res.data;
+            
+            // Load urutan yang tersimpan di localStorage
+            loadMapelOrderFromLocal();
+            
             localStorage.setItem(CACHE_KEY_MAPEL, JSON.stringify({
                 timestamp: Date.now(),
                 data: mapelList
@@ -2123,7 +2407,10 @@
         document.getElementById('hadirHariIni').textContent = totalHadir;
     }
     
-    window.refreshRingkasan = () => loadRingkasanHariIni();
+    window.refreshRingkasan = () => {
+        loadRingkasanHariIni();
+        updateMapelSelects(); // Refresh pilihan mapel juga
+    };
     
     function updateStats() {
         document.getElementById('totalMapel').textContent = mapelList.length;
@@ -2131,19 +2418,45 @@
     }
     
     function updateMapelSelects() {
-        const opts = '<option value="">Pilih Mapel</option>' + mapelList.map(m => `<option value="${m.idMapel}">${escapeHtml(m.namaMapel)}</option>`).join('');
-        document.getElementById('selectedMapelScan').innerHTML = opts;
-        document.getElementById('filterMapelAbsensi').innerHTML = '<option value="">Semua Mapel</option>' + mapelList.map(m => `<option value="${m.idMapel}">${escapeHtml(m.namaMapel)}</option>`).join('');
+        const hariIni = getHariIni();
+        
+        const hariIniBadge = document.getElementById('hariIniBadge');
+        if (hariIniBadge) {
+            hariIniBadge.textContent = `${hariIni}`;
+            const hariColors = {
+                'Senin': '#3b82f6', 'Selasa': '#10b981', 'Rabu': '#202020',
+                'Kamis': '#8b5cf6', 'Jumat': '#06b6d4', 'Sabtu': '#ef4444', 'Minggu': '#222222'
+            };
+            if (hariColors[hariIni]) {
+                hariIniBadge.style.background = hariColors[hariIni];
+            }
+        }
+        
+        // Filter mapel berdasarkan hari ini dan TIDAK di-hidden
+        const mapelHariIni = mapelList.filter(m => m.hari === hariIni && !m.isHidden);
+        
+        let scannerOpts = '<option value="">Pilih Mata Pelajaran</option>';
+        if (mapelHariIni.length === 0) {
+            scannerOpts = '<option value="" disabled>Tidak ada mapel untuk hari ' + hariIni + '</option>';
+        } else {
+            scannerOpts += mapelHariIni.map(m => `<option value="${m.idMapel}">${escapeHtml(m.namaMapel)}</option>`).join('');
+        }
+        document.getElementById('selectedMapelScan').innerHTML = scannerOpts;
+        
+        // Untuk filter absensi (tampilkan semua mapel, termasuk yang di-hidden)
+        const fullOpts = '<option value="">Semua Mapel</option>' + mapelList.map(m => `<option value="${m.idMapel}">${escapeHtml(m.namaMapel)}${m.isHidden ? ' (tersembunyi)' : ''}</option>`).join('');
+        document.getElementById('filterMapelAbsensi').innerHTML = fullOpts;
     }
     
     function renderMapelList() {
         const dashContainer = document.getElementById('mapelList');
         const fullContainer = document.getElementById('fullMapelList');
+        
         if (!mapelList.length) {
             dashContainer.innerHTML = fullContainer.innerHTML = '<div class="empty-state">Belum ada mata pelajaran. Tambah dulu!</div>';
             return;
         }
-        const latest = mapelList.slice(0,3);
+        
         function formatJam(jam) {
             if (!jam) return '-';
             if (typeof jam === 'string' && jam.includes('T')) {
@@ -2162,31 +2475,75 @@
             return hariMap[hari] || '';
         }
         
+        // ==================== BERANDA (DASHBOARD) ====================
+        const sortedByNewest = [...mapelList].sort((a, b) => {
+            const dateA = new Date(a.createdAt || 0);
+            const dateB = new Date(b.createdAt || 0);
+            return dateB - dateA;
+        });
+        
+        const latest = sortedByNewest.slice(0, 3);
+        
         dashContainer.innerHTML = latest.map(m => `
-            <div class="card-item">
-                <div class="card-info">
-                    <h4>${escapeHtml(m.namaMapel)} <span class="hari-badge ${getHariClass(m.hari)}">${m.hari || '-'}</span></h4>
+            <div class="card-item ${m.isHidden ? 'hidden-mapel' : ''}">
+                <div class="card-info" style="flex:1">
+                    <h4>
+                        ${escapeHtml(m.namaMapel)} 
+                        ${m.isHidden ? '<span class="hidden-badge"><i class="fas fa-eye-slash"></i> Tersembunyi</span>' : ''}
+                        <span class="hari-badge ${getHariClass(m.hari)}">${m.hari || '-'}</span>
+                    </h4>
                     <p>Masuk: ${formatJam(m.jamMasuk)} | Keluar: ${formatJam(m.jamKeluar)} | Toleransi: ${m.toleransi} menit</p>
                 </div>
                 <div class="card-actions">
+                    <button class="btn-icon btn-hidden ${m.isHidden ? 'active' : ''}" onclick="toggleHiddenMapel('${m.idMapel}')" title="${m.isHidden ? 'Tampilkan mapel' : 'Sembunyikan mapel'}">
+                        <i class="fas ${m.isHidden ? 'fa-eye' : 'fa-eye-slash'}"></i>
+                    </button>
                     <button class="btn-icon btn-edit" onclick="editMapel('${m.idMapel}')"><i class="fas fa-edit"></i></button>
                     <button class="btn-icon btn-delete" onclick="deleteMapel('${m.idMapel}')"><i class="fas fa-trash"></i></button>
                 </div>
             </div>
         `).join('');
-
-        fullContainer.innerHTML = mapelList.map(m => `
-            <div class="card-item">
-                <div class="card-info">
-                    <h4>${escapeHtml(m.namaMapel)} <span class="hari-badge ${getHariClass(m.hari)}">${m.hari || '-'}</span></h4>
-                    <p>Masuk: ${formatJam(m.jamMasuk)} | Keluar: ${formatJam(m.jamKeluar)} | Toleransi: ${m.toleransi} menit</p>
-                </div>
-                <div class="card-actions">
-                    <button class="btn-icon btn-edit" onclick="editMapel('${m.idMapel}')"><i class="fas fa-edit"></i></button>
-                    <button class="btn-icon btn-delete" onclick="deleteMapel('${m.idMapel}')"><i class="fas fa-trash"></i></button>
+        
+        // ==================== HALAMAN MAPEL ====================
+        const urutanHari = {
+            'Senin': 1, 'Selasa': 2, 'Rabu': 3, 'Kamis': 4,
+            'Jumat': 5, 'Sabtu': 6, 'Minggu': 7
+        };
+        
+        const sortedByDay = [...mapelList].sort((a, b) => {
+            const orderA = urutanHari[a.hari] || 99;
+            const orderB = urutanHari[b.hari] || 99;
+            return orderA - orderB;
+        });
+        
+        const renderItem = (m) => `
+            <div class="card-item ${m.isHidden ? 'hidden-mapel' : ''}" data-id="${m.idMapel}" draggable="true">
+                <div style="display:flex; align-items:center; width:100%;">
+                    <div class="drag-handle">
+                        <i class="fas fa-grip-vertical"></i>
+                    </div>
+                    <div class="card-info" style="flex:1">
+                        <h4>
+                            ${escapeHtml(m.namaMapel)} 
+                            ${m.isHidden ? '<span class="hidden-badge"><i class="fas fa-eye-slash"></i> Tersembunyi</span>' : ''}
+                            <span class="hari-badge ${getHariClass(m.hari)}">${m.hari || '-'}</span>
+                        </h4>
+                        <p>Masuk: ${formatJam(m.jamMasuk)} | Keluar: ${formatJam(m.jamKeluar)} | Toleransi: ${m.toleransi} menit</p>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-icon btn-hidden ${m.isHidden ? 'active' : ''}" onclick="toggleHiddenMapel('${m.idMapel}')" title="${m.isHidden ? 'Tampilkan mapel' : 'Sembunyikan mapel'}">
+                            <i class="fas ${m.isHidden ? 'fa-eye' : 'fa-eye-slash'}"></i>
+                        </button>
+                        <button class="btn-icon btn-edit" onclick="editMapel('${m.idMapel}')"><i class="fas fa-edit"></i></button>
+                        <button class="btn-icon btn-delete" onclick="deleteMapel('${m.idMapel}')"><i class="fas fa-trash"></i></button>
+                    </div>
                 </div>
             </div>
-        `).join('');
+        `;
+        
+        fullContainer.innerHTML = sortedByDay.map(m => renderItem(m)).join('');
+        
+        initDragAndDrop('fullMapelList');
     }
     
     function renderSiswaList() {
@@ -2270,17 +2627,16 @@
     window.saveMapel = async () => {
         const id = document.getElementById('mapelId').value;
         const hari = document.getElementById('mapelHari').value;
-    
-        // >>> TAMBAHKAN SPINNER DI SINI (AWAL) <<<
         const saveBtn = document.querySelector('#mapelModal .btn-save');
-        const originalText = saveBtn.innerHTML;
-        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
-        saveBtn.disabled = true;
+        
+        // Cegah double click
+        if (saveBtn.disabled) return;
+        
+        showButtonSpinner(saveBtn, 'Menyimpan...');
 
         if (!hari) {
             showToast('Pilih hari terlebih dahulu');
-            saveBtn.innerHTML = originalText;  // Reset jika error
-            saveBtn.disabled = false;
+            hideButtonSpinner(saveBtn);
             return;
         }
         const data = {
@@ -2288,11 +2644,12 @@
             namaMapel: document.getElementById('mapelNama').value,
             hari: hari,
             jamMasuk: document.getElementById('mapelJamMasuk').value,
-            jamKeluar: document.getElementById('mapelJamKeluar').value,  // <-- TAMBAHKAN INI
+            jamKeluar: document.getElementById('mapelJamKeluar').value,
             toleransi: parseInt(document.getElementById('mapelToleransi').value)
         };
         if (!data.namaMapel) {
             showToast('Nama mata pelajaran wajib diisi');
+            hideButtonSpinner(saveBtn);
             return;
         }
         if (id) data.idMapel = id;
@@ -2305,12 +2662,13 @@
         } else {
             showToast('Gagal: ' + res.message);
         }
-    
-        // >>> TAMBAHKAN RESET SPINNER DI SINI (AKHIR) <<<
-        saveBtn.innerHTML = originalText;
-        saveBtn.disabled = false;
+        hideButtonSpinner(saveBtn);
     };
     window.deleteMapel = async (id) => {
+        // Cari tombol delete yang diklik
+        const deleteBtn = event?.target?.closest('.btn-delete');
+        if (deleteBtn) showButtonSpinner(deleteBtn, 'Menghapus...');
+        
         showConfirm('Yakin ingin menghapus mata pelajaran ini?', 'Hapus Mapel', async () => {
             const res = await apiCall('deleteMapel', { idMapel: id, uidGuru: currentUser.uid });
             if (res.success) {
@@ -2319,7 +2677,14 @@
             } else {
                 showToast('Gagal: ' + res.message);
             }
+            if (deleteBtn) hideButtonSpinner(deleteBtn);
         });
+        
+        // Jika batal, reset spinner
+        if (!deleteBtn) return;
+        setTimeout(() => {
+            if (deleteBtn.disabled) hideButtonSpinner(deleteBtn);
+        }, 100);
     };
     window.closeMapelModal = () => document.getElementById('mapelModal').style.display = 'none';
     
@@ -2358,12 +2723,12 @@
     window.editSiswa = (id) => openSiswaModal(id);
     window.saveSiswa = async () => {
         const id = document.getElementById('siswaId').value;
-    
-        // >>> TAMBAHKAN SPINNER DI SINI (AWAL) <<<
         const saveBtn = document.querySelector('#siswaModal .btn-save');
-        const originalText = saveBtn.innerHTML;
-        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
-        saveBtn.disabled = true;
+        
+        // Cegah double click
+        if (saveBtn.disabled) return;
+        
+        showButtonSpinner(saveBtn, 'Menyimpan...');
 
         const data = {
             uidGuru: currentUser.uid,
@@ -2373,8 +2738,7 @@
         };
         if (!data.nis || !data.nama) {
             showToast('NIS dan Nama wajib diisi');
-            saveBtn.innerHTML = originalText;  // Reset jika error
-            saveBtn.disabled = false;
+            hideButtonSpinner(saveBtn);
             return;
         }
         if (id) data.idSiswa = id;
@@ -2387,12 +2751,12 @@
         } else {
             showToast('Gagal: ' + res.message);
         }
-    
-        // >>> TAMBAHKAN RESET SPINNER DI SINI (AKHIR) <<<
-        saveBtn.innerHTML = originalText;
-        saveBtn.disabled = false;
+        hideButtonSpinner(saveBtn);
     };
     window.deleteSiswa = async (id) => {
+        const deleteBtn = event?.target?.closest('.btn-delete');
+        if (deleteBtn) showButtonSpinner(deleteBtn, 'Menghapus...');
+        
         showConfirm('Yakin ingin menghapus siswa ini?', 'Hapus Siswa', async () => {
             const res = await apiCall('deleteSiswa', { idSiswa: id, uidGuru: currentUser.uid });
             if (res.success) {
@@ -2401,7 +2765,12 @@
             } else {
                 showToast('Gagal: ' + res.message);
             }
+            if (deleteBtn) hideButtonSpinner(deleteBtn);
         });
+        
+        setTimeout(() => {
+            if (deleteBtn?.disabled) hideButtonSpinner(deleteBtn);
+        }, 100);
     };
     window.closeSiswaModal = () => document.getElementById('siswaModal').style.display = 'none';
     
@@ -2429,7 +2798,7 @@
         statusEl.style.color = 'white';
         setScanStatusMessage('Siap memindai');
 
-        // >>> SEMBUNYIKAN BOTTOM NAVIGATION <<<
+        // SEMBUNYIKAN BOTTOM NAVIGATION
         const bottomNav = document.querySelector('.bottom-nav');
         if (bottomNav) bottomNav.style.display = 'none';
 
@@ -2437,29 +2806,57 @@
         scannerDiv.style.display = 'flex';
         document.body.style.overflow = 'hidden';
 
-        if (!html5QrCode) {
-            html5QrCode = new Html5Qrcode("qr-reader-fullscreen");
+        // HENTIKAN SCANNER LAMA JIKA ADA
+        if (html5QrCode && scannerActive) {
+            html5QrCode.stop().then(() => {
+                startNewScanner(selectedMapelId);
+            }).catch(() => {
+                startNewScanner(selectedMapelId);
+            });
+        } else {
+            startNewScanner(selectedMapelId);
         }
+    };
 
-        currentFacingMode = "environment"; // selalu mulai dari kamera belakang
+    function startNewScanner(selectedMapelId) {
+        if (html5QrCode) {
+            try {
+                html5QrCode.clear();
+            } catch(e) {}
+        }
+        
+        html5QrCode = new Html5Qrcode("qr-reader-fullscreen");
+        currentFacingMode = "environment";
 
         html5QrCode.start(
             { facingMode: currentFacingMode },
-            { fps: 10, qrbox: { width: 280, height: 280 } },
+            { 
+                fps: 10, 
+                qrbox: { width: 280, height: 280 },
+                aspectRatio: 1.0
+            },
             async (decodedText) => {
                 processScanResult(decodedText, selectedMapelId);
             },
-            (errorMessage) => {}
+            (errorMessage) => {
+                // Abaikan error scanning biasa, hanya log jika error serius
+                if (errorMessage.includes('NotFoundException')) {
+                    // Normal, QR belum ditemukan
+                    return;
+                }
+                console.log('Scan error:', errorMessage);
+            }
         ).catch(err => {
-            showToast('Gagal akses kamera: ' + err);
+            console.error('Gagal akses kamera:', err);
+            showToast('Gagal akses kamera: ' + err.message);
             stopScanner();
         });
 
         scannerActive = true;
-    };
+    }
 
     window.stopScanner = () => {
-        // >>> TAMPILKAN KEMBALI BOTTOM NAVIGATION <<<
+    // TAMPILKAN KEMBALI BOTTOM NAVIGATION
         const bottomNav = document.querySelector('.bottom-nav');
         if (bottomNav) bottomNav.style.display = 'flex';
 
@@ -2477,11 +2874,19 @@
         setScanStatusMessage('Siap memindai');
 
         if (html5QrCode && scannerActive) {
-            html5QrCode.stop().then(() => {
+            try {
+                html5QrCode.stop().then(() => {
+                    scannerActive = false;
+                    // Bersihkan instance
+                    html5QrCode.clear();
+                }).catch(e => {
+                    console.log('Stop scanner error:', e);
+                    scannerActive = false;
+                });
+            } catch(e) {
+                console.log('Stop scanner error:', e);
                 scannerActive = false;
-            }).catch(e => {
-                scannerActive = false;
-            });
+            }
         } else {
             scannerActive = false;
         }
@@ -2568,6 +2973,12 @@
             return;
         }
 
+        // TAMBAHKAN PENGECEKAN INI
+        if (mapel.isHidden) {
+            setScanStatusMessage(`❌ Mata pelajaran "${mapel.namaMapel}" sedang disembunyikan`, true);
+            return;
+        }
+
         // ==== PERBAIKAN 1: Pindahkan deklarasi now ke atas ====
         const now = new Date();
         const year = now.getFullYear();
@@ -2639,109 +3050,25 @@
     
     async function sendTelegramNotification(telegramId, siswaNama, mapelNama, status, keterangan) {
         if (!telegramId) return;
-        const BOT_TOKEN = "8723214264:AAEIqOPa580lu6AzuAQLL-pecG_4hUTBc4o";
         const message = `⚠️ *NOTIFIKASI ABSENSI*\n\nNama: ${siswaNama}\nMata Pelajaran: ${mapelNama}\nStatus: ${status}\n${keterangan ? 'Keterangan: '+keterangan : ''}\nWaktu: ${new Date().toLocaleString()}`;
-        const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-        try {
-            await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: telegramId, text: message, parse_mode: 'Markdown' })
-            });
-        } catch(e) { console.log(e); }
+        
+        // Kirim via Apps Script
+        const res = await apiCall('sendTelegramMessage', {
+            chatId: telegramId,
+            message: message
+        });
+        
+        if (!res.success) {
+            console.log('Gagal kirim notifikasi:', res.message);
+        }
     }
     
     // ==================== RIWAYAT ABSENSI ====================
-    window.loadRiwayatAbsensi = async (reset = true) => {
-        const mapelId = document.getElementById('filterMapelAbsensi').value;
-        const tanggalFilter = document.getElementById('filterTanggalAbsensi').value;
-        const container = document.getElementById('riwayatAbsensiList');
-
-        // Jika reset, kosongkan dan tampilkan spinner, reset page
-        if (reset) {
-            absensiPage = 0;
-            container.innerHTML = '<div class="spinner"></div>';
-        }
-
-        const res = await apiCall('getAbsensi', { uidGuru: currentUser.uid });
-        if (!res.success) {
-            container.innerHTML = '<div class="empty-state">Gagal memuat data</div>';
-            return;
-        }
-
-        let data = res.data;
-        if (mapelId) data = data.filter(a => a.mapelId === mapelId);
-        if (tanggalFilter) data = data.filter(a => a.tanggal === tanggalFilter);
-        data.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
-
-        const start = absensiPage * ABSENSI_PER_PAGE;
-        const pageData = data.slice(start, start + ABSENSI_PER_PAGE);
-        const totalPages = Math.ceil(data.length / ABSENSI_PER_PAGE);
-
-        if (pageData.length === 0) {
-            container.innerHTML = '<div class="empty-state">Belum ada data absensi</div>';
-            return;
-        }
-
-        function formatTanggal(tglStr) {
-            if (!tglStr) return '-';
-            if (tglStr.match(/^\d{4}-\d{2}-\d{2}/)) {
-                const parts = tglStr.split('-');
-                return `${parts[2]}/${parts[1]}/${parts[0]}`;
-            }
-            return tglStr;
-        }
-
-        let html = '';
-        for (const a of pageData) {
-            const mapel = mapelList.find(m => m.idMapel === a.mapelId);
-            const namaSiswa = siswaList.find(s => s.idSiswa === a.siswaId)?.nama || a.siswaId;
-            html += `
-                <div class="absensi-item">
-                    <div>
-                        <strong>${escapeHtml(namaSiswa)}</strong><br>
-                        <span style="font-size:11px">${mapel ? mapel.namaMapel : '-'} | ${formatTanggal(a.tanggal)} | ${a.jam?.substring(0,5) || '-'}</span><br>
-                        <span class="status-${a.status === 'Hadir' ? 'hadir' : (a.status === 'Terlambat' ? 'terlambat' : 'alpa')}">${a.status}</span>
-                        ${a.keterangan ? `<span style="font-size:10px; color:#64748b"> (${a.keterangan})</span>` : ''}
-                    </div>
-                    <button class="btn-icon btn-delete" onclick="hapusSatuAbsensi('${a.idAbsensi}')" style="background:#fee2e2; padding:8px 12px; border-radius:12px;"><i class="fas fa-trash"></i></button>
-                </div>
-            `;
-        }
-
-        // Jika bukan halaman pertama, tambahkan hasil di bawah konten yang sudah ada
-        if (!reset) {
-            container.innerHTML += html;
-        } else {
-            container.innerHTML = html;
-        }
-
-        // Tambahkan tombol "Muat Lebih" jika masih ada halaman berikutnya
-        if (start + ABSENSI_PER_PAGE < data.length) {
-            const loadMoreBtn = document.createElement('button');
-            loadMoreBtn.className = 'btn-sm';
-            loadMoreBtn.style.width = '100%';
-            loadMoreBtn.style.marginTop = '12px';
-            loadMoreBtn.style.background = '#667eea';
-            loadMoreBtn.style.color = 'white';
-            loadMoreBtn.textContent = `Muat Lebih (${data.length - (start + ABSENSI_PER_PAGE)} data lagi)`;
-            loadMoreBtn.onclick = () => {
-                absensiPage++;
-                loadRiwayatAbsensi(false);
-            };
-            container.appendChild(loadMoreBtn);
-        }
-
-        // Tampilkan info jumlah data
-        const info = document.createElement('div');
-        info.className = 'empty-state';
-        info.style.padding = '8px';
-        info.style.fontSize = '11px';
-        info.textContent = `Menampilkan ${start + 1}-${Math.min(start + ABSENSI_PER_PAGE, data.length)} dari ${data.length} total`;
-        container.prepend(info);
-    };
     
     window.hapusSatuAbsensi = async (idAbsensi) => {
+        const deleteBtn = event?.target?.closest('.btn-delete');
+        if (deleteBtn) showButtonSpinner(deleteBtn, 'Menghapus...');
+        
         showConfirm('Hapus riwayat absensi ini?', 'Hapus Absensi', async () => {
             const res = await apiCall('deleteAbsensi', { idAbsensi, uidGuru: currentUser.uid });
             if (res.success) {
@@ -2751,7 +3078,12 @@
             } else {
                 showToast('Gagal: ' + res.message);
             }
+            if (deleteBtn) hideButtonSpinner(deleteBtn);
         });
+        
+        setTimeout(() => {
+            if (deleteBtn?.disabled) hideButtonSpinner(deleteBtn);
+        }, 100);
     };
     
     window.hapusSemuaRiwayat = async () => {
@@ -2785,6 +3117,187 @@
             }
         });
     };
+
+    // ==================== FITUR ARSIP ====================
+
+    // Fungsi saat periode berubah
+    function onPeriodeChange() {
+        const periode = document.getElementById('filterPeriode').value;
+        const bulanSelect = document.getElementById('filterBulan');
+        const tanggalInput = document.getElementById('filterTanggalAbsensi');
+        
+        if (periode === 'arsip') {
+            if (bulanSelect) bulanSelect.style.display = 'block';
+            if (tanggalInput) tanggalInput.style.display = 'none';
+            loadDaftarBulanArsip();
+        } else {
+            if (bulanSelect) bulanSelect.style.display = 'none';
+            if (tanggalInput) {
+                tanggalInput.style.display = 'block';
+                const today = new Date();
+                const year = today.getFullYear();
+                const month = String(today.getMonth() + 1).padStart(2, '0');
+                const day = String(today.getDate()).padStart(2, '0');
+                tanggalInput.value = `${year}-${month}-${day}`;
+            }
+        }
+        resetRiwayatPageAndLoad();
+    }
+
+    // Load daftar bulan arsip yang tersedia
+    async function loadDaftarBulanArsip() {
+        const res = await apiCall('getDaftarBulanArsip', { uidGuru: currentUser.uid });
+        const bulanSelect = document.getElementById('filterBulan');
+        
+        if (res.success && res.data.length > 0) {
+            bulanSelect.innerHTML = '<option value="">Pilih Bulan</option>';
+            res.data.forEach(bulan => {
+                bulanSelect.innerHTML += `<option value="${bulan}">${bulan}</option>`;
+            });
+            bulanSelect.disabled = false;
+        } else {
+            bulanSelect.innerHTML = '<option value="">Belum ada data arsip</option>';
+            bulanSelect.disabled = true;
+        }
+    }
+
+    // Update fungsi loadRiwayatAbsensi yang sudah ada
+    // Ganti fungsi loadRiwayatAbsensi yang lama dengan yang baru ini
+    window.loadRiwayatAbsensi = async (reset = true) => {
+        const mapelId = document.getElementById('filterMapelAbsensi').value;
+        const periode = document.getElementById('filterPeriode').value;
+        const bulanArsip = document.getElementById('filterBulan').value;
+        let tanggalFilter = document.getElementById('filterTanggalAbsensi').value;
+        const container = document.getElementById('riwayatAbsensiList');
+        
+        // Validasi untuk periode arsip
+        if (periode === 'arsip' && !bulanArsip) {
+            container.innerHTML = '<div class="empty-state">Silakan pilih bulan arsip terlebih dahulu</div>';
+            return;
+        }
+        
+        // Set default tanggal untuk periode aktif
+        if (periode === 'aktif' && !tanggalFilter) {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            tanggalFilter = `${year}-${month}-${day}`;
+            document.getElementById('filterTanggalAbsensi').value = tanggalFilter;
+        }
+
+        if (reset) {
+            absensiPage = 0;
+            container.innerHTML = '<div class="spinner"></div>';
+        }
+
+        // Panggil API dengan parameter periode
+        const res = await apiCall('getAbsensiWithArchive', { 
+            uidGuru: currentUser.uid,
+            periode: periode,
+            bulanArsip: bulanArsip,
+            mapelId: mapelId || null,
+            tanggal: periode === 'aktif' ? tanggalFilter : null
+        });
+        
+        if (!res.success) {
+            container.innerHTML = '<div class="empty-state">Gagal memuat data</div>';
+            return;
+        }
+
+        let data = res.data;
+        data.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+
+        const start = absensiPage * ABSENSI_PER_PAGE;
+        const pageData = data.slice(start, start + ABSENSI_PER_PAGE);
+        const totalData = data.length;
+        const showingEnd = Math.min(start + ABSENSI_PER_PAGE, totalData);
+
+        if (pageData.length === 0 && start === 0) {
+            if (periode === 'arsip') {
+                container.innerHTML = '<div class="empty-state">Tidak ada data arsip untuk bulan yang dipilih</div>';
+            } else {
+                container.innerHTML = '<div class="empty-state">Belum ada data absensi untuk hari ini</div>';
+            }
+            return;
+        }
+
+        function formatTanggal(tglStr) {
+            if (!tglStr) return '-';
+            if (tglStr.match(/^\d{4}-\d{2}-\d{2}/)) {
+                const parts = tglStr.split('-');
+                return `${parts[2]}/${parts[1]}/${parts[0]}`;
+            }
+            return tglStr;
+        }
+
+        // Buat HTML untuk data
+        let html = '';
+        for (const a of pageData) {
+            const mapel = mapelList.find(m => m.idMapel === a.mapelId);
+            const namaSiswa = siswaList.find(s => s.idSiswa === a.siswaId)?.nama || a.siswaId;
+            html += `
+                <div class="absensi-item">
+                    <div>
+                        <strong>${escapeHtml(namaSiswa)}</strong><br>
+                        <span style="font-size:11px">${mapel ? mapel.namaMapel : '-'} | ${formatTanggal(a.tanggal)} | ${a.jam?.substring(0,5) || '-'}</span><br>
+                        <span class="status-${a.status === 'Hadir' ? 'hadir' : (a.status === 'Terlambat' ? 'terlambat' : 'alpa')}">${a.status}</span>
+                        ${a.keterangan ? `<span style="font-size:10px; color:#64748b"> (${a.keterangan})</span>` : ''}
+                    </div>
+                    <button class="btn-icon btn-delete" onclick="hapusSatuAbsensi('${a.idAbsensi}')" style="background:#fee2e2; padding:8px 12px; border-radius:12px;"><i class="fas fa-trash"></i></button>
+                </div>
+            `;
+        }
+
+        // Buat container baru untuk semua konten
+        let finalHtml = '';
+        
+        // Info jumlah data
+        if (periode === 'arsip') {
+            finalHtml += `
+                <div class="arsip-badge">
+                    <i class="fas fa-archive"></i> 
+                    Menampilkan data arsip bulan: ${bulanArsip} | Total: ${totalData} data
+                </div>
+            `;
+        } else {
+            finalHtml += `
+                <div class="pagination-info" style="background:#f1f5f9; padding:10px 12px; border-radius:12px; margin-bottom:16px; font-size:12px; color:#475569; text-align:center;">
+                    <i class="fas fa-calendar-alt"></i> Tanggal: ${formatTanggal(tanggalFilter)} | Total: ${totalData} data | Menampilkan ${start + 1}-${showingEnd}
+                </div>
+            `;
+        }
+        
+        // Data absensi
+        finalHtml += html;
+        
+        // Tombol Muat Lebih
+        if (showingEnd < totalData) {
+            finalHtml += `
+                <div style="display:flex; justify-content:center; margin-top:20px;">
+                    <button class="btn-sm load-more-btn" style="background:#667eea; color:white; padding:12px 24px; border-radius:12px; cursor:pointer; width:100%; max-width:200px;">
+                        <i class="fas fa-chevron-down"></i> Muat Lebih (${totalData - showingEnd} data lagi)
+                    </button>
+                </div>
+            `;
+        }
+        
+        container.innerHTML = finalHtml;
+        
+        // Event listener tombol muat lebih
+        const loadMoreBtn = container.querySelector('.load-more-btn');
+        if (loadMoreBtn) {
+            loadMoreBtn.onclick = () => {
+                absensiPage++;
+                loadRiwayatAbsensi(false);
+            };
+        }
+    };
+
+    function resetRiwayatPageAndLoad() {
+        absensiPage = 0;
+        loadRiwayatAbsensi(true);
+    }
 
     // ==================== MANUAL ABSENSI (SAKIT/IZIN) ====================
     let currentManualMapelId = null;
@@ -2836,8 +3349,14 @@
 
     window.saveManualAbsensi = async () => {
         const siswaId = document.getElementById('manualSiswaSelect').value;
+        const saveBtn = document.querySelector('#manualAbsensiModal .btn-save');
+        
+        if (saveBtn.disabled) return;
+        showButtonSpinner(saveBtn, 'Menyimpan...');
+        
         if (!siswaId) {
             showToast('Pilih siswa terlebih dahulu');
+            hideButtonSpinner(saveBtn);
             return;
         }
         const status = document.querySelector('input[name="manualStatus"]:checked').value;
@@ -2866,7 +3385,6 @@
         
         if (res.success) {
             showToast(`✅ ${siswaNama} - ${status}`);
-            // Kirim notifikasi Telegram ke orangtua
             if (siswaTelegram) {
                 await sendTelegramNotification(siswaTelegram, siswaNama, mapel.namaMapel, status, keterangan);
             }
@@ -2876,6 +3394,7 @@
         } else {
             showToast('Gagal: ' + res.message);
         }
+        hideButtonSpinner(saveBtn);
     };
     
     // ==================== QR CODE GENERATOR ====================
@@ -3191,8 +3710,21 @@
         const today = `${year}-${month}-${day}`;
         const nowMenit = now.getHours() * 60 + now.getMinutes();
         const todayName = getHariIndonesia(now.getDay());
+    
+        // CEK APAKAH HARI LIBUR
+        const liburRes = await apiCall('getLibur', { uidGuru: currentUser.uid });
+        if (liburRes.success && liburRes.data.some(l => l.tanggal === today)) {
+            console.log('Hari libur, auto-mark alpa dinonaktifkan');
+            return;
+        }
         
         for (const mapel of mapelList) {
+            // SKIP jika mapel di-hidden
+            if (mapel.isHidden) {
+                console.log(`Mapel ${mapel.namaMapel} sedang disembunyikan, skip auto-mark`);
+                continue;
+            }
+
             // Cek apakah mapel untuk hari ini
             if (mapel.hari !== todayName) continue;
             
@@ -3239,7 +3771,14 @@
         const hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
         return hari[dayIndex];
     }
-    
+
+    // ==================== GET HARI INI ====================
+    function getHariIni() {
+        const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        const today = new Date();
+        return days[today.getDay()];
+    }
+        
     function mulaiCekOtomatis() {
         if (intervalCekOtomatis) clearInterval(intervalCekOtomatis);
         intervalCekOtomatis = setInterval(() => {
@@ -3256,7 +3795,22 @@
             item.classList.remove('active');
             if (item.dataset.page === page) item.classList.add('active');
         });
-        if (page === 'absensi') loadRiwayatAbsensi();
+        
+        if (page === 'absensi') {
+            // Reset filter ke mode aktif
+            document.getElementById('filterPeriode').value = 'aktif';
+            document.getElementById('filterBulan').style.display = 'none';
+            document.getElementById('filterTanggalAbsensi').style.display = 'block';
+            // Set tanggal ke hari ini
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            document.getElementById('filterTanggalAbsensi').value = `${year}-${month}-${day}`;
+            loadRiwayatAbsensi();
+        }
+
+        if (page === 'libur') loadLiburList();
         if (page === 'siswa') {
             document.getElementById('searchSiswa').value = '';
             renderSiswaList();
@@ -3264,7 +3818,6 @@
         if (page === 'profile') {
             // Hitung sisa hari
             let sisaHari = '-';
-            let warningClass = '';
             if (currentUser.masaAktif) {
                 const daysLeft = Math.ceil((new Date(currentUser.masaAktif) - new Date()) / (1000 * 60 * 60 * 24));
                 if (daysLeft <= 0) {
@@ -3828,13 +4381,6 @@
             return;
         }
         
-        // Tampilkan konfirmasi dengan cara sederhana dulu untuk testing
-        const confirmSend = confirm(`Kirim pesan ke ${siswaWithTelegram.length} orangtua siswa?\n\nJudul: ${title || '(tanpa judul)'}\nPesan: ${message.substring(0, 50)}${message.length > 50 ? '...' : ''}`);
-        
-        if (!confirmSend) {
-            return;
-        }
-        
         const sendBtn = document.getElementById('sendBroadcastBtn');
         const progressDiv = document.getElementById('broadcastProgress');
         const originalText = sendBtn.innerHTML;
@@ -3927,36 +4473,19 @@
         }, 3000);
     }
 
-    // Fungsi untuk mengirim pesan Telegram langsung
+    // Fungsi untuk mengirim pesan Telegram via Apps Script
     async function sendTelegramMessageDirect(chatId, message) {
-        const BOT_TOKEN = "8723214264:AAEIqOPa580lu6AzuAQLL-pecG_4hUTBc4o";
+        // Kirim via Apps Script
+        const res = await apiCall('sendTelegramMessage', {
+            chatId: chatId,
+            message: message
+        });
         
-        const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-        
-        try {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    chat_id: String(chatId), // Pastikan string
-                    text: message,
-                    parse_mode: 'Markdown'
-                })
-            });
-            
-            const result = await response.json();
-            
-            if (result.ok) {
-                return { success: true };
-            } else {
-                console.error('Telegram API Error:', result);
-                return { success: false, error: result.description || 'Unknown error' };
-            }
-        } catch (error) {
-            console.error('Network Error:', error);
-            return { success: false, error: error.message };
+        if (res.success) {
+            return { success: true };
+        } else {
+            console.error('Telegram API Error:', res.message);
+            return { success: false, error: res.message };
         }
     }
 
@@ -4004,6 +4533,396 @@
             showToast('Gagal menyalin link');
         });
     }
+
+    // ==================== DRAG AND DROP MAPEL ====================
+    let draggedItem = null;
+
+    function initDragAndDrop(containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        
+        // Hapus event listener lama jika ada
+        container.removeEventListener('dragstart', handleDragStart);
+        container.removeEventListener('dragend', handleDragEnd);
+        container.removeEventListener('dragover', handleDragOver);
+        container.removeEventListener('drop', handleDrop);
+        
+        // Tambahkan event listener baru
+        container.addEventListener('dragstart', handleDragStart);
+        container.addEventListener('dragend', handleDragEnd);
+        container.addEventListener('dragover', handleDragOver);
+        container.addEventListener('drop', handleDrop);
+    }
+
+    function handleDragStart(e) {
+        const target = e.target.closest('.card-item');
+        if (!target) return;
+        
+        draggedItem = target;
+        target.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/html', target.innerHTML);
+        
+        // Required for Firefox
+        e.dataTransfer.setData('text/plain', '');
+    }
+
+    function handleDragEnd(e) {
+        const target = e.target.closest('.card-item');
+        if (target) {
+            target.classList.remove('dragging');
+        }
+        // Hapus class drag-over dari semua item
+        document.querySelectorAll('.card-item').forEach(item => {
+            item.classList.remove('drag-over');
+        });
+        draggedItem = null;
+    }
+
+    function handleDragOver(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        
+        const target = e.target.closest('.card-item');
+        if (!target || target === draggedItem) return;
+        
+        // Hapus class drag-over dari semua item
+        document.querySelectorAll('.card-item').forEach(item => {
+            item.classList.remove('drag-over');
+        });
+        target.classList.add('drag-over');
+    }
+
+    function handleDrop(e) {
+        e.preventDefault();
+        
+        const target = e.target.closest('.card-item');
+        if (!target || !draggedItem || target === draggedItem) {
+            removeDragOverClass();
+            return;
+        }
+        
+        // Dapatkan ID mapel yang dipindahkan
+        const draggedId = draggedItem.dataset.id;
+        const targetId = target.dataset.id;
+        
+        if (!draggedId || !targetId) {
+            removeDragOverClass();
+            return;
+        }
+        
+        // Cari index dalam array mapelList
+        const draggedIndex = mapelList.findIndex(m => m.idMapel === draggedId);
+        const targetIndex = mapelList.findIndex(m => m.idMapel === targetId);
+        
+        if (draggedIndex === -1 || targetIndex === -1) {
+            removeDragOverClass();
+            return;
+        }
+        
+        // Pindahkan item dalam array
+        const [movedItem] = mapelList.splice(draggedIndex, 1);
+        mapelList.splice(targetIndex, 0, movedItem);
+        
+        // Simpan urutan baru ke localStorage
+        saveMapelOrder();
+        
+        // Update cache di localStorage
+        localStorage.setItem(CACHE_KEY_MAPEL, JSON.stringify({
+            timestamp: Date.now(),
+            data: mapelList
+        }));
+        
+        // Render ulang kedua container
+        renderMapelList();
+        
+        // Update mapel select (tanpa reload dari server)
+        updateMapelSelects();
+        
+        removeDragOverClass();
+        
+        showToast('Urutan mata pelajaran telah diubah');
+    }
+
+    function removeDragOverClass() {
+        document.querySelectorAll('.card-item').forEach(item => {
+            item.classList.remove('drag-over');
+        });
+    }
+
+    function saveMapelOrder() {
+        // Simpan urutan ke localStorage saja
+        const order = mapelList.map(m => m.idMapel);
+        localStorage.setItem('mapel_order', JSON.stringify(order));
+        console.log('Urutan mapel tersimpan ke localStorage');
+    }
+
+    function loadMapelOrderFromLocal() {
+        const savedOrder = localStorage.getItem('mapel_order');
+        if (savedOrder) {
+            try {
+                const order = JSON.parse(savedOrder);
+                // Urutkan mapelList berdasarkan order yang tersimpan
+                mapelList.sort((a, b) => {
+                    const indexA = order.indexOf(a.idMapel);
+                    const indexB = order.indexOf(b.idMapel);
+                    if (indexA === -1) return 1;
+                    if (indexB === -1) return -1;
+                    return indexA - indexB;
+                });
+                console.log('Urutan mapel dimuat dari localStorage');
+            } catch(e) {
+                console.log('Gagal memuat urutan:', e);
+            }
+        }
+    }
+
+    // ==================== FITUR LIBUR ====================
+    let liburList = [];
+
+    async function loadLiburList() {
+        const container = document.getElementById('liburList');
+        container.innerHTML = '<div class="spinner"></div>';
+        
+        const res = await apiCall('getLibur', { uidGuru: currentUser.uid });
+        if (res.success) {
+            liburList = res.data || [];
+            renderLiburList();
+        } else {
+            container.innerHTML = '<div class="empty-state">Gagal memuat data libur</div>';
+        }
+    }
+
+    function renderLiburList() {
+        const container = document.getElementById('liburList');
+        if (!liburList.length) {
+            container.innerHTML = '<div class="empty-state">Belum ada tanggal libur. Tambahkan sekarang!</div>';
+            return;
+        }
+        
+        // Urutkan dari tanggal terdekat
+        const sorted = [...liburList].sort((a, b) => new Date(a.tanggal) - new Date(b.tanggal));
+        
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        container.innerHTML = sorted.map(l => {
+            const liburDate = new Date(l.tanggal);
+            const isPast = liburDate < today;
+            const isToday = liburDate.getTime() === today.getTime();
+            
+            let statusBadge = '';
+            if (isToday) statusBadge = '<span class="libur-badge" style="background:#22c55e">Hari Ini</span>';
+            else if (isPast) statusBadge = '<span class="libur-badge" style="background:#64748b">Lewat</span>';
+            else statusBadge = '<span class="libur-badge">Akan Datang</span>';
+            
+            return `
+                <div class="card-item">
+                    <div class="card-info" style="flex:1">
+                        <h4>${formatTanggalLibur(l.tanggal)} ${statusBadge}</h4>
+                        <p><i class="fas fa-info-circle"></i> ${escapeHtml(l.keterangan) || 'Hari Libur'}</p>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-icon btn-edit" onclick="editLibur('${l.idLibur}')"><i class="fas fa-edit"></i></button>
+                        <button class="btn-icon btn-delete" onclick="deleteLibur('${l.idLibur}')"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function formatTanggalLibur(tanggal) {
+        const date = new Date(tanggal);
+        const hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'][date.getDay()];
+        const tgl = date.getDate();
+        const bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'][date.getMonth()];
+        const tahun = date.getFullYear();
+        return `${hari}, ${tgl} ${bulan} ${tahun}`;
+    }
+
+    function openTambahLiburModal() {
+        document.getElementById('liburModalTitle').textContent = 'Tambah Hari Libur';
+        document.getElementById('liburId').value = '';
+        document.getElementById('liburTanggal').value = '';
+        document.getElementById('liburKeterangan').value = '';
+        document.getElementById('liburModal').style.display = 'flex';
+    }
+
+    function editLibur(id) {
+        const libur = liburList.find(l => l.idLibur === id);
+        if (!libur) return;
+        
+        document.getElementById('liburModalTitle').textContent = 'Edit Hari Libur';
+        document.getElementById('liburId').value = libur.idLibur;
+        document.getElementById('liburTanggal').value = libur.tanggal;
+        document.getElementById('liburKeterangan').value = libur.keterangan || '';
+        document.getElementById('liburModal').style.display = 'flex';
+    }
+
+    function closeLiburModal() {
+        document.getElementById('liburModal').style.display = 'none';
+    }
+
+    async function saveLibur() {
+        const id = document.getElementById('liburId').value;
+        const tanggal = document.getElementById('liburTanggal').value;
+        const keterangan = document.getElementById('liburKeterangan').value;
+        
+        const saveBtn = document.querySelector('#liburModal .btn-save');
+        if (saveBtn.disabled) return;
+        showButtonSpinner(saveBtn, 'Menyimpan...');
+        
+        if (!tanggal) {
+            showToast('Pilih tanggal libur');
+            hideButtonSpinner(saveBtn);
+            return;
+        }
+        
+        const data = {
+            uidGuru: currentUser.uid,
+            tanggal: tanggal,
+            keterangan: keterangan
+        };
+        if (id) data.idLibur = id;
+        
+        const res = await apiCall('saveLibur', data);
+        if (res.success) {
+            showToast('Hari libur tersimpan');
+            closeLiburModal();
+            await loadLiburList();
+            await cekHariLibur(); // Update status libur di dashboard
+        } else {
+            showToast('Gagal: ' + res.message);
+        }
+        hideButtonSpinner(saveBtn);
+    }
+
+    async function deleteLibur(id) {
+        showConfirm('Yakin ingin menghapus hari libur ini?', 'Hapus Libur', async () => {
+            const res = await apiCall('deleteLibur', { idLibur: id, uidGuru: currentUser.uid });
+            if (res.success) {
+                showToast('Hari libur dihapus');
+                await loadLiburList();
+                await cekHariLibur(); // Update status libur di dashboard
+            } else {
+                showToast('Gagal: ' + res.message);
+            }
+        });
+    }
+
+    // Cek apakah hari ini libur
+    let isHariLibur = false;
+    let liburKeterangan = '';
+
+    async function cekHariLibur() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        const todayStr = `${year}-${month}-${day}`;
+        
+        const res = await apiCall('getLibur', { uidGuru: currentUser.uid });
+        if (res.success) {
+            const libur = res.data.find(l => l.tanggal === todayStr);
+            isHariLibur = !!libur;
+            liburKeterangan = libur ? libur.keterangan || 'Hari Libur' : '';
+            
+            // Tampilkan banner jika hari libur
+            showLiburBanner();
+            
+            // Update status scanner
+            updateScannerStatus();
+        }
+    }
+
+    function showLiburBanner() {
+        // Hapus banner lama jika ada
+        const existingBanner = document.getElementById('liburBanner');
+        if (existingBanner) existingBanner.remove();
+        
+        if (isHariLibur) {
+            const banner = document.createElement('div');
+            banner.id = 'liburBanner';
+            banner.className = 'libur-active-badge';
+            banner.innerHTML = `
+                <i class="fas fa-calendar-times"></i>
+                <span>📅 Hari ini adalah ${liburKeterangan}. Scanner dinonaktifkan dan tidak ada absensi otomatis.</span>
+            `;
+            
+            // Masukkan di atas stats-grid
+            const statsGrid = document.querySelector('.stats-grid');
+            if (statsGrid) {
+                statsGrid.parentNode.insertBefore(banner, statsGrid);
+            }
+        }
+    }
+
+    function updateScannerStatus() {
+        const scannerSelect = document.getElementById('selectedMapelScan');
+        const scannerBtn = document.getElementById('btnOpenScanner');
+        
+        if (isHariLibur) {
+            if (scannerSelect) {
+                scannerSelect.innerHTML = '<option value="" disabled>📅 Hari Libur - Tidak ada absensi</option>';
+                scannerSelect.disabled = true;
+            }
+            if (scannerBtn) {
+                scannerBtn.disabled = true;
+                scannerBtn.style.background = '#94a3b8';
+                scannerBtn.style.cursor = 'not-allowed';
+                scannerBtn.title = 'Tidak dapat absen karena hari libur';
+            }
+        } else {
+            if (scannerSelect) {
+                scannerSelect.disabled = false;
+            }
+            if (scannerBtn) {
+                scannerBtn.disabled = false;
+                scannerBtn.style.background = '#22c55e';
+                scannerBtn.style.cursor = 'pointer';
+                scannerBtn.title = '';
+            }
+            // Refresh pilihan mapel
+            updateMapelSelects();
+        }
+    }
+
+    // ==================== HIDDEN MAPEL ====================
+    async function toggleHiddenMapel(idMapel) {
+        const mapel = mapelList.find(m => m.idMapel === idMapel);
+        if (!mapel) return;
+        
+        const newHiddenStatus = !mapel.isHidden;
+        const actionText = newHiddenStatus ? 'disembunyikan' : 'ditampilkan';
+        
+        showConfirm(`Yakin ingin ${actionText} mata pelajaran "${mapel.namaMapel}"?`, 'Konfirmasi', async () => {
+            const res = await apiCall('toggleHiddenMapel', {
+                uidGuru: currentUser.uid,
+                idMapel: idMapel,
+                isHidden: newHiddenStatus
+            });
+            
+            if (res.success) {
+                // Update local array
+                mapel.isHidden = newHiddenStatus;
+                
+                // Update cache
+                localStorage.setItem(CACHE_KEY_MAPEL, JSON.stringify({
+                    timestamp: Date.now(),
+                    data: mapelList
+                }));
+                
+                // Re-render
+                renderMapelList();
+                updateMapelSelects();
+                
+                showToast(`Mata pelajaran "${mapel.namaMapel}" ${actionText}`);
+            } else {
+                showToast('Gagal: ' + res.message);
+            }
+        });
+    }
+
     
     init();
 </script>
