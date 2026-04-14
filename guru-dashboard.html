@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-    <title>Dashboard Guru - AbsenKu</title>
+    <title>Dashboard Guru - GoAbs</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
@@ -28,10 +28,15 @@
         body.bg-dark { background: #1e293b; }
         
         .bottom-nav { 
-            position:fixed; bottom:0; left:0; right:0; background:white; 
+            position:fixed; bottom:0; background:white; 
             display:flex; justify-content:space-around; padding:12px 20px; 
             border-top:1px solid #e2e8f0; box-shadow:0 -4px 12px rgba(0,0,0,0.05); 
-            z-index:100; 
+            z-index:100;
+            width: 100%;
+            max-width: 500px;
+            left: 50%;
+            transform: translateX(-50%);
+            right: auto;
         }
         .nav-item { 
             display:flex; flex-direction:column; align-items:center; gap:4px; 
@@ -44,7 +49,11 @@
         
         .header { 
             background:linear-gradient(135deg,#667eea,#764ba2); 
-            border-radius:0 0 28px 28px; padding:20px 20px 32px; 
+            border-radius:0 0 28px 28px; 
+            padding:20px 20px 32px;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
             color:white; transition: all 0.3s ease;
             position: relative;
             z-index: 1;
@@ -577,7 +586,7 @@
     <div class="header" id="headerBg">
         <div class="container" style="padding:0">
             <div class="header-top">
-                <div class="logo-small"><i class="fas fa-qrcode"></i> AbsenKu</div>
+                <div class="logo-small"><i class="fas fa-qrcode"></i> GoAbs</div>
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <button class="header-minimize-btn" id="headerMinimizeBtn" onclick="toggleHeader()">
                         <i class="fas fa-chevron-up"></i>
@@ -794,7 +803,7 @@
                 <button class="btn-sm" style="background:#f59e0b; color:white; flex:1; padding:12px" onclick="document.getElementById('restoreFileInput').click()">
                     <i class="fas fa-upload"></i> Restore
                 </button>
-                <input type="file" id="restoreFileInput" accept=".absenku,application/json" style="display:none" onchange="restoreData(this.files[0])">
+                <input type="file" id="restoreFileInput" accept=".GoAbs,application/json" style="display:none" onchange="restoreData(this.files[0])">
             </div>
             <p style="font-size:11px; color:#94a3b8; margin-top:12px;">
                 <i class="fas fa-shield-alt"></i> Data disimpan dalam format terenkripsi. Pastikan Anda menyimpan file dengan aman.
@@ -2041,10 +2050,10 @@
             showToast('Scanner sudah aktif');
             return;
         }
-    
+
         const mapel = mapelList.find(m => m.idMapel === selectedMapelId);
         document.getElementById('scanInfoMapel').textContent = mapel ? mapel.namaMapel : 'Mapel';
-    
+
         // Reset tampilan hasil scan
         document.getElementById('displayNama').textContent = '-';
         document.getElementById('displayNIS').textContent = '-';
@@ -2053,21 +2062,21 @@
         statusEl.style.background = 'transparent';
         statusEl.style.color = 'white';
         setScanStatusMessage('Siap memindai');
-    
+
         // >>> SEMBUNYIKAN BOTTOM NAVIGATION <<<
         const bottomNav = document.querySelector('.bottom-nav');
         if (bottomNav) bottomNav.style.display = 'none';
-    
+
         const scannerDiv = document.getElementById('scannerFullscreen');
         scannerDiv.style.display = 'flex';
         document.body.style.overflow = 'hidden';
-    
+
         if (!html5QrCode) {
             html5QrCode = new Html5Qrcode("qr-reader-fullscreen");
         }
-    
+
         currentFacingMode = "environment"; // selalu mulai dari kamera belakang
-    
+
         html5QrCode.start(
             { facingMode: currentFacingMode },
             { fps: 10, qrbox: { width: 280, height: 280 } },
@@ -2079,19 +2088,19 @@
             showToast('Gagal akses kamera: ' + err);
             stopScanner();
         });
-    
+
         scannerActive = true;
     };
-    
+
     window.stopScanner = () => {
         // >>> TAMPILKAN KEMBALI BOTTOM NAVIGATION <<<
         const bottomNav = document.querySelector('.bottom-nav');
         if (bottomNav) bottomNav.style.display = 'flex';
-    
+
         document.body.style.overflow = '';
         const scannerDiv = document.getElementById('scannerFullscreen');
         scannerDiv.style.display = 'none';
-    
+
         // Reset tampilan hasil scan
         document.getElementById('displayNama').textContent = '-';
         document.getElementById('displayNIS').textContent = '-';
@@ -2100,7 +2109,7 @@
         statusEl.style.background = 'transparent';
         statusEl.style.color = 'white';
         setScanStatusMessage('Siap memindai');
-    
+
         if (html5QrCode && scannerActive) {
             html5QrCode.stop().then(() => {
                 scannerActive = false;
@@ -2588,7 +2597,7 @@
             doc.setFontSize(10);
             doc.text('Scan QR Code untuk melakukan absensi', 105, 200, { align: 'center' });
             doc.text('Pilih mata pelajaran sebelum scan', 105, 210, { align: 'center' });
-            doc.text('AbsenKu - Sistem Absensi Digital', 105, 220, { align: 'center' });
+            doc.text('GoAbs - Sistem Absensi Digital', 105, 220, { align: 'center' });
             doc.save(`QR_${siswa.nis}_${siswa.nama}.pdf`);
             showToast('PDF berhasil didownload');
             closeQrPreviewModal();
