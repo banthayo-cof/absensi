@@ -574,19 +574,21 @@
         }
         
         async function sendWelcomeNotification(chatId, siswaNama) {
-            const BOT_TOKEN = "8723214264:AAEIqOPa580lu6AzuAQLL-pecG_4hUTBc4o";
             const message = `🎉 *Selamat Datang di GoAbs!*\n\nHalo orangtua/wali dari *${siswaNama}*,\n\nChat ID Telegram Anda telah berhasil terdaftar. Anda akan menerima notifikasi absensi anak Anda melalui bot ini.\n\nTerima kasih! 🙏`;
             
-            const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+            // Kirim via Apps Script
+            const response = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'sendTelegramMessage',
+                    chatId: chatId,
+                    message: message
+                })
+            });
+            const result = await response.json();
             
-            try {
-                await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ chat_id: chatId, text: message, parse_mode: 'Markdown' })
-                });
-            } catch(e) {
-                console.log('Gagal kirim notifikasi:', e);
+            if (!result.success) {
+                console.log('Gagal kirim notifikasi:', result.message);
             }
         }
         
