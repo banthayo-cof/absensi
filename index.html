@@ -3,8 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="
+    script-src 'self' 'unsafe-eval' 'unsafe-inline' https://app.sandbox.midtrans.com https://snap-assets.al-pc-id-b.cdn.gtflabs.io https://api.sandbox.midtrans.com https://pay.google.com https://gwk.gopayapi.com;
+    ">
     <title>GoAbs - Login Guru</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">  
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
@@ -400,7 +405,10 @@
 <div class="container">
     <div class="card">
         <div class="logo">
-            <div class="logo-icon"><i class="fas fa-qrcode"></i></div>
+            
+            <div class="logo-small">
+                <img src="icon4.png" alt="GoAbs" style="height: 50px; width: auto; vertical-align: middle; margin-bottom: 8px;">
+            </div>         
             <h1>GoAbs</h1>
             <p class="subtitle">Absensi Digital Berbasis Parentis</p>
         </div>
@@ -438,15 +446,15 @@
                     <div class="package-option" data-price="350000" data-duration="lifetime" data-days="999" onclick="selectPackage(this)"><div class="package-price">Rp 350.000</div><div class="package-desc">Lifetime ⭐</div></div>
                 </div>
             </div>
-            <button class="btn btn-primary" onclick="handleRegister()">Daftar & Kirim ke Admin</button>
+            <button class="btn btn-primary" onclick="handleRegisterWithPayment()">Daftar & Bayar Sekarang</button>
         </div>
         <div id="message" class="message"></div>
     </div>
 </div>
-
+<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="Mid-client-aNg8f6EY1fiVo7Ks"></script>
 <script>
     // GANTI DENGAN URL DEPLOY APPS SCRIPT ANDA YANG SUDAH BERHASIL
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxCbCUzowT1_1gohZGrw3Snyn9DLmYswkha1-nbvgLGj7UL7ojLgGO5u3HwSNOoHM-ACg/exec';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnEUI2zO2zsLVdf7cFVvKfMEZl-nfk4npfpJWx11FBMcrEPDMjJGnDfg_q0N-1QopO8w/exec';
 
     // ========== ENKRIPSI LOCALSTORAGE ==========
     function encryptData(data) {
@@ -540,6 +548,47 @@
         };
     }
 
+    async function trackUserAccess() {
+        // Non-blocking: jangan pakai await
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                action: 'trackUser',
+                email: document.getElementById('loginEmail')?.value || 'Unknown',
+                ip: await getClientIP().catch(() => 'Unknown'),
+                userAgent: navigator.userAgent,
+                referrer: document.referrer,
+                timestamp: new Date().toISOString(),
+                devToolsDetected: detectDevTools()
+            })
+        }).catch(e => console.log('Tracking error:', e));
+    }
+
+    // Deteksi DevTools untuk index.html
+    function detectDevTools() {
+        let detected = false;
+        const widthThreshold = window.outerWidth - window.innerWidth > 200;
+        const heightThreshold = window.outerHeight - window.innerHeight > 200;
+        if (widthThreshold || heightThreshold) {
+            detected = true;
+        }
+        return detected;
+    }
+
+    async function getClientIP() {
+        try {
+            const response = await fetch('https://api.ipify.org?format=json');
+            const data = await response.json();
+            return data.ip;
+        } catch(e) {
+            return 'Unable to get IP';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        trackUserAccess().catch(e => console.log('Tracking error:', e));
+    });
+
     async function handleLogin() {
         const email = document.getElementById('loginEmail').value;
         const password = document.getElementById('loginPassword').value;
@@ -549,7 +598,6 @@
         btn.disabled = true; 
         btn.innerHTML = `<span class="btn-spinner"></span> Memeriksa...`;
 
-        // Dapatkan IP publik (gratis)
         let ip = 'unknown';
         try {
             const ipRes = await fetch('https://api.ipify.org?format=json');
@@ -574,7 +622,7 @@
                     const paket = json.data.paket || 'Anda';
                     const uid = json.data.uid;
                     const waNumber = '6289609745090'; // Nomor admin
-                    const waMessage = `Halo Admin, saya ingin memperpanjang paket GoAbs. UID: ${uid}`;
+                    const waMessage = `Halo Admin, saya ingin memperpanjang paket di GoAbs. UID: ${uid}`;
                     const waLink = `https://wa.me/${waNumber}?text=${encodeURIComponent(waMessage)}`;
                     
                     // Buat pesan dengan tautan
@@ -633,7 +681,7 @@
             const json = await res.json();
             if (json.success) {
                 showMessage('Pendaftaran berhasil! Silakan hubungi admin untuk aktivasi.', 'success');
-                const waMsg = `Halo Admin, saya ${name} ingin order WebApp Absensi dengan paket ${selectedPackage.duration}, harga Rp ${selectedPackage.price.toLocaleString()}. Email: ${email}. Sekolah: ${sekolah}, Kelas: ${namaKelas}`;
+                const waMsg = `Halo Admin, saya ${name} ingin berlangganan di GoAbs dengan paket ${selectedPackage.duration}, harga Rp ${selectedPackage.price.toLocaleString()}. Email: ${email}. Sekolah: ${sekolah}, Kelas: ${namaKelas}`;
                 const waLink = document.createElement('a');
                 waLink.href = `https://wa.me/6289609745090?text=${encodeURIComponent(waMsg)}`;
                 waLink.target = '_blank';
@@ -645,6 +693,102 @@
             }
         } catch (err) { showMessage('Gagal koneksi', 'error'); }
         finally { btn.disabled = false; btn.textContent = 'Daftar & Kirim ke Admin'; }
+    }
+
+    async function handleRegisterWithPayment() {
+        const name = document.getElementById('regName').value;
+        const email = document.getElementById('regEmail').value;
+        const password = document.getElementById('regPassword').value;
+        const whatsapp = document.getElementById('regWhatsapp').value;
+        const sekolah = document.getElementById('regSekolah').value;
+        const namaKelas = document.getElementById('regKelas').value;
+
+        if (!name || !email || !password || !whatsapp || !sekolah || !namaKelas) {
+            showMessage('Semua field harus diisi', 'error');
+            return;
+        }
+        if (password.length < 6) {
+            showMessage('Password min 6 karakter', 'error');
+            return;
+        }
+
+        const btn = event.target;
+        btn.disabled = true;
+        btn.innerHTML = `<span class="btn-spinner"></span> Menyimpan data...`;
+
+        try {
+            const regRes = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'register',
+                    name, email, password, whatsapp, sekolah, namaKelas,
+                    paket: selectedPackage.duration,
+                    harga: selectedPackage.price,
+                    masaHari: selectedPackage.days
+                })
+            });
+            const regJson = await regRes.json();
+            console.log('Raw response:', regRes);
+            console.log('Parsed response:', regJson);
+
+            if (!regJson.success) {
+                showMessage(regJson.message, 'error');
+                btn.disabled = false;
+                btn.innerHTML = 'Daftar & Bayar Sekarang';
+                return;
+            }
+
+            const { uid } = regJson.data;
+
+            // 2. Buat transaksi Midtrans
+            const transRes = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'createMidtransTransaction',
+                    uid: uid,
+                    nama: name,
+                    email: email,
+                    paket: selectedPackage.duration,
+                    harga: selectedPackage.price,
+                    tipe: 'register'
+                })
+            });
+            const transJson = await transRes.json();
+            console.log('Transaction response:', transJson);
+
+            if (!transJson.success) {
+                // Tampilkan pesan error dari server
+                showMessage('Gagal membuat transaksi: ' + (transJson.message || 'Unknown error'), 'error');
+                btn.disabled = false;
+                btn.innerHTML = 'Daftar & Bayar Sekarang';
+                return;
+            }
+            const { token } = transJson.data;
+
+            snap.pay(token, {
+                onSuccess: function(result) {
+                    showMessage('Pembayaran berhasil! Akun Anda akan segera diaktifkan.', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'guru-dashboard.html';
+                    }, 2000);
+                },
+                onPending: function(result) {
+                    showMessage('Pembayaran tertunda. Silakan selesaikan pembayaran.', 'warning');
+                    btn.disabled = false;
+                    btn.innerHTML = 'Daftar & Bayar Sekarang';
+                },
+                onError: function(result) {
+                    showMessage('Pembayaran gagal: ' + result.status_message, 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = 'Daftar & Bayar Sekarang';
+                }
+            });
+
+        } catch (err) {
+            showMessage('Gagal: ' + err.message, 'error');
+            btn.disabled = false;
+            btn.innerHTML = 'Daftar & Bayar Sekarang';
+        }
     }
 
     document.querySelector('.package-option').classList.add('selected');
